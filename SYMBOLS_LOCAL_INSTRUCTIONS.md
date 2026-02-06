@@ -224,10 +224,8 @@ state/
 // state/metrics.js
 export default [
   {
-    title: 'Status',
-    items: [
-      { caption: 'Live', value: 14 }
-    ]
+    title: "Status",
+    items: [{ caption: "Live", value: 14 }],
   },
   // ...
 ];
@@ -316,7 +314,6 @@ export default {
 
 ---
 
-
 ### 9. **Dependencies** (`/smbls/dependencies.js`)
 
 **File Pattern:**
@@ -384,7 +381,6 @@ export default {
 - Single default export mapping file keys to file metadata
 - **Managed entirely via Symbols SDK** - do NOT manually create entries
 - Use strict folder structure
-
 
 **Adding Files:**
 
@@ -734,6 +730,130 @@ export const ComponentName = {
     };
   }
 }
+```
+
+---
+
+## Component Scope: Local Functions
+
+When you need to define local helper functions within a component that are not meant for global reuse, use the `scope` property instead of importing external functions. This keeps the component self-contained and avoids creating unnecessary top-level imports.
+
+### ❌ INCORRECT: Importing Local Functions
+
+```javascript
+// functions/fetchMetrics.js - If only used in one component!
+const fetchMetrics = (timeRange) => {
+  // fetch logic
+};
+
+// components/Graphs.js
+import { fetchMetrics } from "../functions/fetchMetrics.js"; // WRONG!
+
+export const Graphs = {
+  extends: "Box",
+  onInit: (el) => {
+    fetchMetrics("week");
+  },
+};
+```
+
+**Problems:**
+
+- Creates unnecessary separate files for component-specific logic
+- Mixes component-specific and globally-reusable code
+- Adds imports where they should be avoided
+
+### ✅ CORRECT: Use Component Scope
+
+```javascript
+// components/Graphs.js
+export const Graphs = {
+  extends: "Box",
+
+  // Define local functions in scope property
+  scope: {
+    fetchMetrics: (timeRange) => {
+      // fetch logic here - not exported, only used locally
+      return fetch(`/api/metrics?range=${timeRange}`).then((res) => res.json());
+    },
+
+    calculateAverage: (data) => {
+      return data.reduce((a, b) => a + b, 0) / data.length;
+    },
+  },
+
+  // Use scope functions in event handlers
+  onInit: (el) => {
+    const metrics = el.scope.fetchMetrics("week");
+    const avg = el.scope.calculateAverage(metrics);
+  },
+
+  Button: {
+    onClick: (el) => {
+      el.scope.fetchMetrics("month");
+    },
+  },
+};
+```
+
+**Key Rules for Scope:**
+
+- `scope` property contains **local helper functions** for this component only
+- Functions in scope are **never exported** and **never imported elsewhere**
+- Access scope functions via `el.scope.functionName()`
+- Use `scope` only for component-specific logic; use `functions/` for reusable utilities
+- Scope functions receive only the data they need (element context is available via `el`)
+
+### Scope vs Functions Folder
+
+**Use `scope` when:**
+
+- Function is only used within one component
+- Function is a helper for that specific component's logic
+- Keeping code co-located improves readability
+
+**Use `functions/` when:**
+
+- Function is reused across multiple components
+- Function is a general utility (parsing, calculations, data fetching patterns)
+- Function can be tested independently
+
+### Example: Multiple Scope Functions
+
+```javascript
+export const MetricsPage = {
+  extends: "Page",
+
+  scope: {
+    // Local helpers
+    fetchMetrics: async (type) => {
+      const res = await fetch(`/api/metrics/${type}`);
+      return res.json();
+    },
+
+    formatMetric: (value) => {
+      return new Intl.NumberFormat().format(value);
+    },
+
+    filterByEnvironment: (data, env) => {
+      return data.filter((item) => item.environment === env);
+    },
+  },
+
+  onInit: async (el, state) => {
+    const data = await el.scope.fetchMetrics("daily");
+    state.metrics = el.scope.filterByEnvironment(data, "production");
+  },
+
+  MetricsChart: {
+    onRender: (el, state) => {
+      const formatted = state.metrics.map((m) =>
+        el.scope.formatMetric(m.value),
+      );
+      el.data = formatted;
+    },
+  },
+};
 ```
 
 ---
