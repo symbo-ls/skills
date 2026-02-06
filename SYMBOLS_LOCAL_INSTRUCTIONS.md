@@ -480,8 +480,8 @@ export default {
 
 ```javascript
 // snippets/index.js
-export * from "./cardSnippet.js";
-export * from "./formSnippet.js";
+export * from "./oneSnippet.js";
+export * from "./dataSnippet.js";
 ```
 
 **Key Rules:**
@@ -495,36 +495,8 @@ export * from "./formSnippet.js";
 **Example Snippet:**
 
 ```javascript
-// snippets/cardSnippet.js
-export const cardSnippet = {
-  extends: "Box",
-  padding: "A2",
-  round: "A",
-  background: "white",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-};
-```
-
-**Usage in Components:**
-
-```javascript
-{
-  Card: cardSnippet,  // Reuse snippet pattern
-  Title: {
-    text: 'Hello'
-  }
-}
-```
-
----
-
-## Root Index Export (`/smbls/index.js`)
-
-**Example Snippet:**
-
-```javascript
-// snippets/usersMockData.js
-export const usersMockData = {
+// snippets/dataMockSnippet.js
+export const dataMockSnippet = {
   data: [],
 };
 ```
@@ -533,9 +505,12 @@ export const usersMockData = {
 
 ```javascript
 {
-  CardSnippet: {
-    children: el => el.getSnippet('usersMockData').data
-  },  // Reuse snippet pattern
+  List: {
+    // Reuse snippet pattern
+    children: (el, s, ctx) => el.getSnippet('dataMockSnippet').data
+    // or in rare occasions
+    children: (el, s, ctx) => ctx.snippets['dataMockSnippet'].data
+  },
   Title: {
     text: 'Hello'
   }
