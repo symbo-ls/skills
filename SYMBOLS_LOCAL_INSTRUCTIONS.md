@@ -685,6 +685,77 @@ export const ComponentName = {
 
 ---
 
+## Component References: PascalCase Keys
+
+**PascalCase keys automatically create components of that type.** You don't need to import them or use `extends:` when the key name matches the component name.
+
+### ❌ INCORRECT: Verbose with imports and extends
+
+```javascript
+import { UpChart } from "./UpChart.js";
+import { PeerCountChart } from "./PeerCountChart.js";
+
+export const Graphs = {
+  UpChart: { extends: UpChart, props: { order: "1" } },
+  PeerCountChart: { extends: PeerCountChart, props: { flex: "1" } },
+};
+```
+
+**Problems:**
+
+- Unnecessary imports clutter the file
+- Verbose `extends:` and `props:` wrapper
+- Redundant when key name matches component name
+
+### ✅ CORRECT: Clean PascalCase references
+
+```javascript
+export const Graphs = {
+  UpChart: { order: "1" },
+  PeerCountChart: { flex: "1" },
+};
+```
+
+**Key Rules:**
+
+- **Key name determines component type:** `UpChart:` automatically creates an `UpChart` component
+- **No imports needed:** Component is referenced by name, not imported
+- **Flatten props directly:** Put props inline, not in a `props:` wrapper
+- **No `extends:` needed:** The key name is implicit `extends: ComponentName`
+- **Works in all contexts:** Top-level, nested, or inside functions
+
+### Example: Rows of Charts
+
+```javascript
+export const Graphs = {
+  extends: "Flex",
+
+  Row1: {
+    extends: "Flex",
+    flow: "x",
+    gap: "A",
+
+    // Each chart component is created by its PascalCase key
+    LatestBlockChart: { flex: "1" },
+    SyncingChart: { flex: "1" },
+    BlocksToSyncChart: { flex: "1" },
+  },
+
+  Row2: {
+    extends: "Flex",
+    flow: "x",
+    gap: "A",
+
+    PeerCountChart: { flex: "1" },
+    NetListeningChart: { flex: "1" },
+  },
+};
+```
+
+This approach keeps component definitions clean and readable while maintaining the declarative architecture principle.
+
+---
+
 ## Event Handlers
 
 ```javascript
@@ -830,6 +901,53 @@ export const MetricsPage = {
   },
 };
 ```
+
+### Calling Global Functions from Scope
+
+When a scope function needs to call a global function from the `functions/` folder, use `el.call()` instead of importing. **Pass `el` as the first parameter to the scope function so it has access to element methods.**
+
+**Pattern:**
+
+```javascript
+export const Graphs = {
+  extends: "Flex",
+
+  scope: {
+    // Scope function receives el as first parameter
+    fetchMetrics: (el, s, timeRange) => {
+      const networkName = (s.protocol || "").toLowerCase();
+
+      s.update({ metricsLoading: true });
+
+      // Call global function via el.call() - no import needed
+      el.call("apiFetch", "POST", "/api/metrics", {
+        networkName,
+        timeRangeMinutes: timeRange || 5,
+      })
+        .then((data) => {
+          s.update({ metricsData: data, metricsLoading: false });
+        })
+        .catch((err) => {
+          console.error("Failed to fetch:", err);
+          s.update({ metricsLoading: false });
+        });
+    },
+  },
+
+  onInit: (el, s) => {
+    // Pass el as first argument when calling scope function
+    el.scope.fetchMetrics(el, s, 5);
+  },
+};
+```
+
+**Key Rules:**
+
+- **No imports needed** - Call global functions via `el.call('functionName', ...args)`
+- **Pass `el` as first parameter** - Scope functions need element access to call `el.call()`
+- **Update all call sites** - When calling the scope function, pass `el` as first argument
+- **Keep scope for local logic only** - Use this pattern only in scope functions that need global utilities
+- **No async/await in el.call()** - Handle promises with `.then()` and `.catch()`
 
 ---
 
