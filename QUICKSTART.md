@@ -82,4 +82,4 @@ _Documentation compiled from community discussions. For the latest updates, refe
 
 ## Symbols Feedback Conventions
 
-Supplemental conventions are merged into [CLAUDE.md](CLAUDE.md).
+Supplemental conventions are merged into [GENERAL.md](GENERAL.md).

@@ -637,4 +637,4 @@ Always output complete, ready-to-use files. Never leave placeholders or TODOs.
 
 ## Symbols Feedback Conventions
 
-Supplemental conventions are merged into [CLAUDE.md](CLAUDE.md).
+Supplemental conventions are merged into [GENERAL.md](GENERAL.md).

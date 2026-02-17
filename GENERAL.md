@@ -1,4 +1,4 @@
-# CLAUDE.md — Symbols / DOMQL v3 Strict Rules
+# Symbols / DOMQL v3 Strict Rules
 
 ## CRITICAL: v3 Syntax Only
 
@@ -766,10 +766,10 @@ export default { '/': main, '/dashboard': dashboard }
 el.router("/dashboard", el.getRoot());
 
 // From functions (this context)
-this.call("router", "/dashboard", this.__ref.root);
+this.call("router", "/dashboard", this.getRoot());
 
 // With dynamic path
-this.call("router", "/network/" + data.protocol, this.__ref.root);
+this.call("router", "/network/" + data.protocol, this.getRoot());
 ```
 
 ---
@@ -1208,7 +1208,7 @@ export const add = async function addNew(item = "network") {
   if (!res) return;
 
   this.state.root.quietUpdate({ modal: null });
-  this.call("router", "/item/" + res.id, this.__ref.root);
+  this.call("router", "/item/" + res.id, this.getRoot());
   this.node.reset();
 };
 
@@ -1219,7 +1219,7 @@ export const edit = async function edit(item = "network", protocol) {
 
   const res = await this.call("fetch", "PUT", `/${protocol}`, data);
   this.state.root.quietUpdate({ modal: null });
-  this.call("router", "/network/" + protocol, this.__ref.root);
+  this.call("router", "/network/" + protocol, this.getRoot());
   this.node.reset();
 };
 
@@ -1228,7 +1228,7 @@ export const remove = async function remove(item = "network", protocol) {
   const res = await this.call("fetch", "DELETE", "/" + protocol);
   if (!res) return;
   this.state.root.quietUpdate({ modal: null });
-  this.call("router", "/dashboard", this.__ref.root);
+  this.call("router", "/dashboard", this.getRoot());
 };
 ```
 
@@ -1260,7 +1260,7 @@ onRender: (el, s) => {
 export const auth = async function auth() {
   if (this.state.root.success) {
     if (window.location.pathname === "/") {
-      this.call("router", "/dashboard", this.__ref.root);
+      this.call("router", "/dashboard", this.getRoot());
     }
   } else {
     if (window.location.pathname === "/") {
@@ -1269,11 +1269,11 @@ export const auth = async function auth() {
       });
       if (res.success) {
         this.state.root.update(res);
-        this.call("router", "/dashboard", this.__ref.root);
+        this.call("router", "/dashboard", this.getRoot());
       }
       return res;
     } else {
-      this.call("router", "/", this.__ref.root);
+      this.call("router", "/", this.getRoot());
     }
   }
 };
@@ -1942,71 +1942,171 @@ export default {
 
 ---
 
-## Symbols Feedback Conventions (Merged)
+## Conventions & Best Practices
 
-These additions capture practical conventions that should be applied alongside the strict rules above.
+These conventions capture practical patterns that should be applied alongside the strict rules above.
 
-### 1. Component Naming with Suffixes
+### 1. No `props:` Wrapper (v3)
+
+Props must be flattened at the component root level, never wrapped.
+
+```js
+// Wrong
+{ props: { padding: 'A', color: 'primary' } }
+
+// Right
+{ padding: 'A', color: 'primary' }
+```
+
+### 2. Use `getRoot()` not `__ref.root`
+
+`__ref` is an internal private API. Always use the public methods.
+
+```js
+// Wrong
+el.__ref.root;
+this.__ref.root;
+
+// Right
+el.getRoot();
+el.getRootState();
+```
+
+### 3. Component Naming with Suffixes
 
 - Use `Icon_2` instead of `Icon2` so the framework properly extends the `Icon` component
 - Underscore-separated suffixes (`_2`, `_3`, etc.) ensure child components inherit from the base component
 - Same applies for all components: `Button_2`, `Text_3`, etc.
 
-### 2. Event Handlers
+### 4. Icon `name` prop, not `icon`
 
-- Do not use `on: { click: ... }` pattern
-- Use `onClick: (event, el, s) => { ... }`
+```js
+// Wrong
+Icon: { extends: 'Icon', icon: 'search' }
+
+// Right
+Icon: { name: 'search' }
+```
+
+### 5. Use Semantic Atoms Instead of `tag`
+
+| Instead of      | Use                                     |
+| --------------- | --------------------------------------- |
+| `tag: 'a'`      | `extends: 'Link'` (has built-in router) |
+| `tag: 'button'` | `extends: 'Button'` or key as `Button`  |
+| `tag: 'img'`    | `extends: 'Img'` or key as `Img`        |
+| `tag: 'input'`  | `extends: 'Input'` or key as `Input`    |
+| `tag: 'span'`   | Use `text` property directly            |
+
+15 built-in atoms: `Text`, `Box`, `Flex`, `Grid`, `Link`, `Input`, `Radio`, `Checkbox`, `Svg`, `Icon`, `IconText`, `Button`, `Img`, `Iframe`, `Video`
+
+PascalCase keys auto-map to matching atoms/HTML tags, so explicit `tag` is redundant.
+
+### 6. PascalCase Key Auto-Mapping (Redundant extends)
+
+When the key name matches a built-in component, `extends` is redundant:
+
+```js
+// Wrong — redundant extends
+Icon: { extends: 'Icon', name: 'search' }
+Img: { extends: 'Img', src: '...' }
+
+// Right — auto-mapped from key
+Icon: { name: 'search' }
+Img: { src: '...' }
+```
+
+Keys like `SearchIcon` or `MainImg` DO need explicit `extends`.
+
+**Defaults:** `extends: 'Text'` and `extends: 'Box'` are defaults — never specify them.
+
+### 7. Flex Auto-Inference
+
+`extends: 'Flex'` is redundant when `flow` or `align` is present — Flex is auto-inferred. Only use explicit `extends: 'Flex'` when neither `flow` nor `align` is set.
+
+```js
+// Wrong — redundant
+{ extends: 'Flex', flow: 'y', align: 'center center' }
+
+// Right — auto-inferred
+{ flow: 'y', align: 'center center' }
+
+// Right — needed (no flow/align)
+{ extends: 'Flex', gap: 'A' }
+```
+
+### 8. Grid Usage
+
+- Never combine `extends: 'Flex'` with `display: 'grid'`
+- Components with `gridTemplateColumns` / grid properties that aren't keyed as `Grid` must use `extends: 'Grid'`
+- A key named `Grid` auto-maps, so `extends: 'Grid'` is redundant on it
+
+```js
+// Wrong
+PlansGrid: { extends: 'Flex', display: 'grid', gridTemplateColumns: '...' }
+
+// Right
+PlansGrid: { extends: 'Grid', gridTemplateColumns: '...' }
+
+// Right — key auto-maps
+Grid: { gridTemplateColumns: '...' }
+```
+
+### 9. H1-H6 Key Shorthand
+
+Heading keys (H1, H2, H3, etc.) imply their tag. No need for explicit `tag: 'h1'` etc.
+
+```js
+// Wrong
+H: { tag: 'h2', text: 'Title' }
+
+// Right
+H2: { text: 'Title' }
+```
+
+**Caveat:** Inside components rendered via `childExtends`, use descriptive keys like `Title: { tag: 'h3' }` instead of bare `H3` to avoid recursive element resolution.
+
+### 10. Hgroup Usage
+
+Use `Hgroup` only for heading + paragraph pairings. Solo headings should not be wrapped.
+
+Inside `Hgroup`, always use `H` — not `H1`, `H2`, etc. The Hgroup context determines the heading level.
+
+```js
+// Right — H + P pairing
+Hgroup: {
+  H: { text: 'Title' },
+  P: { text: 'Description' }
+}
+
+// Wrong — H1/H2/H3 inside Hgroup
+Hgroup: {
+  H1: { text: 'Title' },
+  P: { text: 'Description' }
+}
+
+// Wrong — solo heading in Hgroup
+Hgroup: { H: { text: 'Section Title' } }
+
+// Right — solo heading (outside Hgroup, use H1-H6)
+H2: { text: 'Section Title' }
+```
+
+### 11. Event Handlers & Casing
+
+- Use `onClick: (event, el, s) => { ... }` — not `on: { click: ... }`
 - Same applies for all events: `onKeydown`, `onSubmit`, `onError`, etc.
+- Use camelCase for multi-word event handlers:
 
-### 3. Image Component
+```js
+// Wrong
+(onPointerdown, onPointermove, onPointerup);
 
-- Do not use `tag: 'img'` to create image elements
-- Use `Img` as the component key (e.g. `Img: { src: '...', ... }`)
-- Or use `extends: 'Img'` when a custom key name is needed (e.g. `Favicon: { extends: 'Img', ... }`)
+// Right
+(onPointerDown, onPointerMove, onPointerUp);
+```
 
-### 4. Flex is Auto-Inferred
-
-- Do not use `extends: 'Flex'` when `align` or `flow` props are present
-- Use `flow` and `align` directly — the framework auto-inferrs Flex behavior
-- Example: `{ flow: 'x', align: 'center', gap: 'A' }` — no need for `extends: 'Flex'`
-
-### 5. Built-in Components
-
-- Use built-in components by key name: `Grid`, `Link`, `Img`, `Flex`
-- PascalCase keys auto-map to matching atoms, so `Grid: {}` already extends Grid — no need for `extends: 'Grid'`
-- Only use `extends` for custom names: `ResultsGrid: { extends: 'Grid', ... }`
-
-### 6. State Functions
-
-- Pattern: `(el, s) => ...` where `el` is element, `s` is state
-- Use `s.update({})` to update state
-- Use `el.call('functionName', ...args)` to call registered functions
-
-### 7. Dynamic Children
-
-- Use `childrenAs: 'state'` with `children: [...]` or `children: (el, s) => [...]` for lists
-- Use `childExtends: 'ComponentName'` to extend a registered component for each child
-- Use `childProps: { ... }` for inline child definitions
-- Do not repeat `extends` + `state` per child — use `childExtends` + `childrenAs: 'state'` + `children` array
-- Do not mix `extends` and props inside `childExtends` — keep `childExtends` as a string and move props to `childProps`
-- Do not use `childExtends` for inline prop objects without `extends` — use `childProps` instead
-- `childExtends` should always be a string (component name), never an object
-
-### 8. Use Atom Components Instead of `tag`
-
-- Do not use `tag: 'a'` — use `extends: 'Link'` (Link atom has built-in router support)
-- Do not use `tag: 'span'` — `Text` is a builtin atom, just use `text` property directly without `extends: 'Text'`
-- Do not use `tag: 'button'` on a `Button` key — the key auto-maps to the Button atom
-- Do not use `tag: 'input'` on an `Input` key — the key auto-maps to the Input atom
-- 15 built-in atoms: `Text`, `Box`, `Flex`, `Grid`, `Link`, `Input`, `Radio`, `Checkbox`, `Svg`, `Icon`, `IconText`, `Button`, `Img`, `Iframe`, `Video`
-- PascalCase keys auto-map to matching atoms/HTML tags, so explicit `tag` is redundant
-
-### 9. No `props:` Wrapper (v2 pattern)
-
-- Do not use `props: { padding: 'A', ... }` — this is v2 syntax
-- Flatten all props directly: `{ padding: 'A', ... }`
-
-### 10. Use Shorthand Props
+### 12. Use Shorthand Props
 
 - `flow: 'y'` instead of `flexFlow: 'column'`
 - `flow: 'x'` instead of `flexFlow: 'row'`
@@ -2020,31 +2120,180 @@ These additions capture practical conventions that should be applied alongside t
   - `round: 'F'` not `round: '9999px'` (for pill shapes)
   - Exception: CSS syntax values like `border: '1px solid ...'` and `boxShadow` keep px
 
-### 11. No Imports Between Project Files
+### 13. childExtends as String + childProps
+
+Use string references for `childExtends`, not inline objects. Pair with `childProps` for shared styling.
+
+```js
+// Wrong — inline object
+childExtends: { tag: 'button', padding: 'A', ... }
+
+// Right — string + childProps
+childExtends: 'Button',
+childProps: { padding: 'A', ... }
+```
+
+- Do not mix `extends` and props inside `childExtends` — keep `childExtends` as a string and move props to `childProps`
+- Do not use `childExtends` for inline prop objects without `extends` — use `childProps` instead
+- `childExtends` should always be a string (component name), never an object
+
+### 14. `childrenAs: 'state'` for State Collections
+
+Pass data as state to children using `childrenAs: 'state'`. No need to `.map()` and wrap each item.
+
+```js
+// Wrong — manual .map wrapping
+children: plans.map(plan => ({ PlanCard: { state: plan } }))
+
+// Wrong — .map with state wrapper
+childExtends: 'FeatureCard',
+children: items.map(item => ({ state: item }))
+
+// Right — childrenAs handles state passing
+childExtends: 'PlanCard',
+childrenAs: 'state',
+children: plans
+```
+
+Obsolete patterns — never use:
+
+| Obsolete                              | Replacement                                    |
+| ------------------------------------- | ---------------------------------------------- |
+| `$stateCollection`                    | `children: []` + `childrenAs: 'state'`         |
+| `$propsCollection`                    | `children: []`                                 |
+| `$collection`                         | `children: []` + `childrenAs: 'element'`       |
+| `.map(x => ({ Comp: { state: x } }))` | `childExtends: 'Comp'` + `childrenAs: 'state'` |
+
+### 15. State Functions
+
+- Pattern: `(el, s) => ...` where `el` is element, `s` is state
+- Use `s.update({})` to update state
+- Use `el.call('functionName', ...args)` to call registered functions
+
+### 16. Declarative Over Imperative
+
+Avoid direct DOM manipulation (`el.node.style.x = ...`). Drive appearance through state and computed props.
+
+```js
+// Wrong
+onClick: (ev, el) => { el.node.style.background = 'red' }
+
+// Right — computed from state
+background: (el, s) => s.active ? 'red' : 'gray',
+onClick: (ev, el, s) => { s.update({ active: true }) }
+```
+
+### 17. No `style:` Wrapper for Pseudo-states
+
+Pseudo-states go at the component root level:
+
+```js
+// Wrong
+style: { ':hover': { background: 'blue' } }
+
+// Right
+':hover': { background: 'blue' }
+```
+
+### 18. Design Tokens Over Hardcoded Colors
+
+Use design system color tokens instead of hex/rgba values:
+
+```js
+// Wrong
+color: "#2563EB";
+background: "rgba(59,130,246,0.4)";
+
+// Right
+color: "blue600";
+background: "blue500 .4";
+```
+
+### 19. Element Lookup
+
+- `el.getRoot()` — access root element
+- `el.getRootState()` — access root state
+- `el.lookup('ComponentName')` — only for PascalCase registered components, and only for accessing **props** on a parent component
+- Never use `el.parent.parent.parent...` chains — use `el.lookup()` or `el.closest()`
+
+### 20. State and Scope Inheritance — No Lookup Needed
+
+Children that don't define their own `state` or `scope` inherit from the nearest ancestor that does. No need to `el.lookup('ParentComponent')` to access parent state or scope.
+
+```js
+// Wrong — unnecessary lookup for state
+onClick: (ev, el, s) => {
+  const ctrl = el.lookup('MyComponent')
+  ctrl.state.update({ open: true })
+  ctrl.scope.handleAction(ctrl, ctrl.state)
+}
+
+// Wrong — fragile parent chain
+if: (el, s) => s.parent?.parent?.loading
+
+// Right — state and scope are inherited
+onClick: (ev, el, s) => {
+  s.update({ open: true })
+  el.scope.handleAction(el, s)
+}
+if: (el, s) => s.loading
+```
+
+Lookup is still needed to access **props** on a parent component (props don't inherit).
+
+### 21. PascalCase Keys Create Children — Lowercase Vendor Prefixes
+
+Any property starting with a capital letter is treated as a child component, not a CSS property. Vendor-prefixed CSS properties must start with lowercase:
+
+```js
+// Wrong — creates a child element named "WebkitBackgroundClip"
+WebkitBackgroundClip: "text";
+WebkitLineClamp: "4";
+WebkitBoxOrient: "vertical";
+
+// Right — treated as CSS property
+webkitBackgroundClip: "text";
+webkitLineClamp: "4";
+webkitBoxOrient: "vertical";
+```
+
+### 22. Component Barrel Exports
+
+Use `export * from` (not `export * as`) in component index files:
+
+```js
+// Wrong
+export * as SearchBar from "./SearchBar.js";
+
+// Right
+export * from "./SearchBar.js";
+```
+
+### 23. No Imports Between Project Files
 
 - Components reference each other by PascalCase key name in the tree
 - Functions are called via `el.call('functionName', args)`
 - Never `import { Component } from './Component.js'` for usage in other components
 
-### 12. v3 Syntax Only
+### 24. v3 Syntax Only
 
 - `extends` not `extend`
 - `childExtends` not `childExtend`
 - `onClick: fn` not `on: { click: fn }`
 - Props flattened, not wrapped in `props: {}`
 
-### 13. Button Reset Styling
+### 25. Button Reset Styling
 
 - Buttons in custom themes need `background: 'transparent'`, `border: 'none'`, and explicit `color`
 - Browsers apply default button styles (gray bg, border) that can hide content on dark backgrounds
 
-### 14. Responsive Design
+### 26. Responsive Design
 
 - Use `@mobileM` media query for mobile adjustments
 - Scale down font sizes and padding proportionally
 - Keep layout structure consistent, just adjust spacing
 
-### 15. Adding Icons to Design System
+### 27. Adding Icons to Design System
 
 - All new icons added to `ICONS.js` must be 24x24 (`width="24" height="24"`)
 - If the source SVG has a different size, keep the original `viewBox` but set `width="24" height="24"` on the `<svg>` element

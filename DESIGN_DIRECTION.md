@@ -323,4 +323,4 @@ UI must demonstrate:
 
 ## Symbols Feedback Conventions
 
-Supplemental conventions are merged into [CLAUDE.md](CLAUDE.md).
+Supplemental conventions are merged into [GENERAL.md](GENERAL.md).
