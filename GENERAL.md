@@ -32,6 +32,32 @@ export const Header = { extends: "Flex", padding: "A" };
 export const Header = (el, state) => ({ padding: "A" });
 ```
 
+### 1b. NO constants above export
+
+Never define `const` variables above the `export`. All data must live inside the component using `scope`, `snippets`, or `state`:
+
+- **scope** — static/local data (arrays, config objects)
+- **state** — reactive application state
+- **snippets** — reusable component fragments
+
+```js
+// WRONG
+const ITEMS = [{ icon: "search", title: "Search" }];
+export const myPage = {
+  children: ITEMS,
+};
+
+// CORRECT
+export const myPage = {
+  scope: {
+    ITEMS: [{ icon: "search", title: "Search" }],
+  },
+  Grid: {
+    children: (el) => el.scope.ITEMS,
+  },
+};
+```
+
 ### 2. NO imports between project files
 
 ```js
@@ -2207,6 +2233,16 @@ background: "rgba(59,130,246,0.4)";
 // Right
 color: "blue600";
 background: "blue500 .4";
+```
+
+**Gradient convention:** Inside CSS gradient strings, token names are not resolved automatically. Always use `var(--color-ColorName)`. Note: opacity inside gradient strings is not yet supported.
+
+```js
+// Wrong
+background: "linear-gradient(to right, blue500, blue400)";
+
+// Right
+background: "linear-gradient(to right, var(--color-blue500), var(--color-blue400))";
 ```
 
 ### 19. Element Lookup
