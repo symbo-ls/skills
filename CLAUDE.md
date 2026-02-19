@@ -1,4 +1,4 @@
-# Symbols / DOMQL v3 Strict Rules
+# CLAUDE.md — Symbols / DOMQL v3 Strict Rules
 
 ## CRITICAL: v3 Syntax Only
 
@@ -26,36 +26,10 @@ This project uses **DOMQL v3 syntax exclusively**. Never use v2 patterns.
 
 ```js
 // CORRECT
-export const Header = { extends: "Flex", padding: "A" };
+export const Header = { extends: 'Flex', padding: 'A' }
 
 // WRONG — never do this
-export const Header = (el, state) => ({ padding: "A" });
-```
-
-### 1b. NO constants above export
-
-Never define `const` variables above the `export`. All data must live inside the component using `scope`, `snippets`, or `state`:
-
-- **scope** — static/local data (arrays, config objects)
-- **state** — reactive application state
-- **snippets** — reusable component fragments
-
-```js
-// WRONG
-const ITEMS = [{ icon: "search", title: "Search" }];
-export const myPage = {
-  children: ITEMS,
-};
-
-// CORRECT
-export const myPage = {
-  scope: {
-    ITEMS: [{ icon: "search", title: "Search" }],
-  },
-  Grid: {
-    children: (el) => el.scope.ITEMS,
-  },
-};
+export const Header = (el, state) => ({ padding: 'A' })
 ```
 
 ### 2. NO imports between project files
@@ -82,7 +56,7 @@ import { parseData } from '../functions/parseData.js'
 // The key name IS the component — no extends needed when key matches
 {
   UpChart: {
-    flex: "1";
+    flex: '1'
   }
 }
 // Equivalent to: { UpChart: { extends: 'UpChart', flex: '1' } }
@@ -180,14 +154,14 @@ smbls/
 
 ```js
 export const ComponentName = {
-  extends: "Flex", // v3: always "extends" (plural)
-  childExtends: "ListItem", // v3: always "childExtends" (plural)
+  extends: 'Flex', // v3: always "extends" (plural)
+  childExtends: 'ListItem', // v3: always "childExtends" (plural)
 
   // Props flattened directly — CSS, HTML, custom
-  padding: "A B",
-  background: "surface",
-  borderRadius: "B",
-  theme: "primary",
+  padding: 'A B',
+  background: 'surface',
+  borderRadius: 'B',
+  theme: 'primary',
 
   // Events — onX prefix
   onClick: (e, el, state) => {},
@@ -196,19 +170,19 @@ export const ComponentName = {
 
   // Conditional cases
   isActive: false,
-  ".isActive": { background: "primary", color: "white" },
+  '.isActive': { background: 'primary', color: 'white' },
 
   // Responsive
-  "@mobile": { padding: "A" },
-  "@tablet": { padding: "B" },
+  '@mobile': { padding: 'A' },
+  '@tablet': { padding: 'B' },
 
   // Child components — PascalCase keys, no imports
   Header: {},
   Content: {
-    Article: { text: "Hello" },
+    Article: { text: 'Hello' }
   },
-  Footer: {},
-};
+  Footer: {}
+}
 ```
 
 ---
@@ -391,8 +365,8 @@ export default {
   base: 16,
   ratio: 1.25,
   subSequence: true,
-  templates: {},
-};
+  templates: {}
+}
 ```
 
 The same letter tokens (A, B, C, etc.) apply to fontSize, with values computed from the typography sequence rather than the spacing sequence.
@@ -402,12 +376,12 @@ The same letter tokens (A, B, C, etc.) apply to fontSize, with values computed f
 ## Shorthand Props
 
 ```js
-flow: "y"; // flexFlow: 'column'
-flow: "x"; // flexFlow: 'row'
-align: "center space-between"; // alignItems + justifyContent
-round: "B"; // borderRadius
-size: "C"; // width + height
-wrap: "wrap"; // flexWrap
+flow: 'y' // flexFlow: 'column'
+flow: 'x' // flexFlow: 'row'
+align: 'center space-between' // alignItems + justifyContent
+round: 'B' // borderRadius
+size: 'C' // width + height
+wrap: 'wrap' // flexWrap
 ```
 
 ---
@@ -448,39 +422,39 @@ color: 'white 0.65'                  // white at 65% opacity
 // designSystem/index.js — full configuration
 export default {
   COLOR: {
-    black: "#000",
-    white: "#fff",
-    softBlack: "#1d1d1d",
+    black: '#000',
+    white: '#fff',
+    softBlack: '#1d1d1d',
     // Array format for light/dark: [lightValue, darkValue]
-    title: ["--gray1 1", "--gray15 1"],
-    document: ["--gray15 1", "--gray1 1 +4"],
+    title: ['--gray1 1', '--gray15 1'],
+    document: ['--gray15 1', '--gray1 1 +4']
   },
   GRADIENT: {},
   THEME: {
     document: {
-      "@light": { color: "black", background: "white" },
-      "@dark": { color: "white", background: "softBlack" },
+      '@light': { color: 'black', background: 'white' },
+      '@dark': { color: 'white', background: 'softBlack' }
     },
     transparent: {
-      "@dark": { background: "transparent", color: "white 0.65" },
-      "@light": { background: "transparent", color: "black 0.65" },
+      '@dark': { background: 'transparent', color: 'white 0.65' },
+      '@light': { background: 'transparent', color: 'black 0.65' }
     },
     button: {
-      "@dark": {
-        color: "white",
-        background: "transparent",
-        ":hover": { background: "deepFir" },
-        ":active": { background: "deepFir +15" },
-      },
+      '@dark': {
+        color: 'white',
+        background: 'transparent',
+        ':hover': { background: 'deepFir' },
+        ':active': { background: 'deepFir +15' }
+      }
     },
     field: {
-      "@dark": {
-        color: "gray14",
-        background: "gray3 0.5",
-        ":hover": { background: "gray3 0.65 +2" },
-        ":focus": { background: "gray3 0.65 +6" },
-      },
-    },
+      '@dark': {
+        color: 'gray14',
+        background: 'gray3 0.5',
+        ':hover': { background: 'gray3 0.65 +2' },
+        ':focus': { background: 'gray3 0.65 +6' }
+      }
+    }
   },
   FONT: {},
   FONT_FAMILY: {},
@@ -488,12 +462,12 @@ export default {
     base: 16,
     ratio: 1.25,
     subSequence: true,
-    templates: {},
+    templates: {}
   },
   SPACING: {
     base: 16,
     ratio: 1.618,
-    subSequence: true,
+    subSequence: true
   },
   TIMING: {},
   GRID: {},
@@ -511,8 +485,8 @@ export default {
   useDefaultConfig: true,
   useDocumentTheme: true,
   verbose: false,
-  globalTheme: "dark",
-};
+  globalTheme: 'dark'
+}
 ```
 
 ---
@@ -591,19 +565,19 @@ Use `scope` for component-specific helpers. Use `functions/` for reusable utilit
 
 ```js
 export const Dashboard = {
-  extends: "Page",
+  extends: 'Page',
 
   scope: {
     fetchMetrics: (el, s, timeRange) => {
       // el.call() for global functions — no imports
-      el.call("apiFetch", "POST", "/api/metrics", { timeRange }).then((data) =>
-        s.update({ metrics: data }),
-      );
-    },
+      el.call('apiFetch', 'POST', '/api/metrics', { timeRange }).then((data) =>
+        s.update({ metrics: data })
+      )
+    }
   },
 
-  onInit: (el, s) => el.scope.fetchMetrics(el, s, 5),
-};
+  onInit: (el, s) => el.scope.fetchMetrics(el, s, 5)
+}
 ```
 
 ---
@@ -640,12 +614,12 @@ State values can be accessed in strings (template binding) and functions:
 ```js
 // Template string binding
 {
-  text: "{{ name }} {{ surname }}";
+  text: '{{ name }} {{ surname }}'
 }
 
 // Function access
 {
-  text: (el, s) => s.name + " " + s.surname;
+  text: (el, s) => s.name + ' ' + s.surname
 }
 ```
 
@@ -663,16 +637,16 @@ State values can be accessed in strings (template binding) and functions:
 ### State Methods
 
 ```js
-s.update({ key: value }); // Update + re-render
+s.update({ key: value }) // Update + re-render
 s.apply((s) => {
-  s.items.push(newItem);
-}); // Mutate with function
-s.replace(data, { preventUpdate: true }); // Replace without render
-s.root.update({ modal: "/add-network" }); // Update root state
-s.root.quietUpdate({ modal: null }); // Update root without listener
-s.parent.update({ isActive: true }); // Update parent state
-s.toggle("isActive"); // Toggle boolean value
-s.destroy(); // Destroy state and references
+  s.items.push(newItem)
+}) // Mutate with function
+s.replace(data, { preventUpdate: true }) // Replace without render
+s.root.update({ modal: '/add-network' }) // Update root state
+s.root.quietUpdate({ modal: null }) // Update root without listener
+s.parent.update({ isActive: true }) // Update parent state
+s.toggle('isActive') // Toggle boolean value
+s.destroy() // Destroy state and references
 ```
 
 ### Root State
@@ -682,7 +656,7 @@ Root state is application-level global state accessible via `state.root`:
 ```js
 {
   User: {
-    text: (el, s) => (s.root.authToken ? "Authorized" : "Not authorized");
+    text: (el, s) => (s.root.authToken ? 'Authorized' : 'Not authorized')
   }
 }
 ```
@@ -730,19 +704,19 @@ export default { 'chart.js': '4.4.9', 'fuse.js': '7.1.0' }
 ```js
 // designSystem/icons.js — flat camelCase keys with inline SVG strings
 export default {
-  chevronLeft: "<svg ...>...</svg>",
-  search: "<svg ...>...</svg>",
-};
+  chevronLeft: '<svg ...>...</svg>',
+  search: '<svg ...>...</svg>'
+}
 
 // Usage
 {
   Icon: {
-    name: "chevronLeft";
+    name: 'chevronLeft'
   }
 }
 {
   Button: {
-    icon: "search";
+    icon: 'search'
   }
 }
 ```
@@ -789,13 +763,13 @@ export default { '/': main, '/dashboard': dashboard }
 
 ```js
 // From components (el context)
-el.router("/dashboard", el.getRoot());
+el.router('/dashboard', el.getRoot())
 
 // From functions (this context)
-this.call("router", "/dashboard", this.getRoot());
+this.call('router', '/dashboard', this.__ref.root)
 
 // With dynamic path
-this.call("router", "/network/" + data.protocol, this.getRoot());
+this.call('router', '/network/' + data.protocol, this.__ref.root)
 ```
 
 ---
@@ -803,14 +777,14 @@ this.call("router", "/network/" + data.protocol, this.getRoot());
 ## Element Methods
 
 ```js
-element.update(newProps); // Update element
-element.setProps(props); // Update props
-element.set(content); // Set content
-element.remove(); // Remove from DOM
-element.lookup("key"); // Find ancestor by key
-element.call("functionName", args); // Call global function
-element.scope.localFn(el, s); // Call scope function
-state.update({ key: value }); // Update state and re-render
+element.update(newProps) // Update element
+element.setProps(props) // Update props
+element.set(content) // Set content
+element.remove() // Remove from DOM
+element.lookup('key') // Find ancestor by key
+element.call('functionName', args) // Call global function
+element.scope.localFn(el, s) // Call scope function
+state.update({ key: value }) // Update state and re-render
 ```
 
 ---
@@ -1001,11 +975,11 @@ export const Modal = {
     Box:
       (s.root.modal && {
         extends: s.root.modal, // Extends from a page path dynamically
-        onClick: (ev) => ev.stopPropagation(),
+        onClick: (ev) => ev.stopPropagation()
       }) ||
-      {},
-  }),
-};
+      {}
+  })
+}
 ```
 
 ---
@@ -1013,9 +987,9 @@ export const Modal = {
 ## `hide` Property
 
 ```js
-hide: true; // Always hidden
-hide: (el, s) => !s.public_key; // Conditionally hidden
-hide: () => window.location.pathname === "/"; // Based on URL
+hide: true // Always hidden
+hide: (el, s) => !s.public_key // Conditionally hidden
+hide: () => window.location.pathname === '/' // Based on URL
 ```
 
 ---
@@ -1037,7 +1011,7 @@ hide: () => window.location.pathname === "/"; // Based on URL
 
 ```js
 {
-  html: (el, s) => s.message;
+  html: (el, s) => s.message
 } // Render raw HTML content
 ```
 
@@ -1047,16 +1021,16 @@ hide: () => window.location.pathname === "/"; // Based on URL
 
 ```js
 {
-  tag: "canvas";
+  tag: 'canvas'
 } // Render as <canvas>
 {
-  tag: "form";
+  tag: 'form'
 } // Render as <form>
 {
-  tag: "search";
+  tag: 'search'
 } // Render as <search>
 {
-  tag: "strong";
+  tag: 'strong'
 } // Override auto-mapped tag
 ```
 
@@ -1067,8 +1041,8 @@ hide: () => window.location.pathname === "/"; // Based on URL
 ```js
 export const Dropdown = {
   attr: { dropdown: true }, // Sets data attribute on DOM element
-  tag: "section",
-};
+  tag: 'section'
+}
 ```
 
 ---
@@ -1109,10 +1083,10 @@ Bind a subtree to a specific state key:
 Tokens can be combined with arithmetic:
 
 ```js
-padding: "A+V2"; // A plus V2
-margin: "-Y1 -Z2 - auto"; // Negative values, auto
-right: "A+V2"; // Combined tokens
-margin: "- W B+V2 W"; // Mix of dash (0), tokens, and math
+padding: 'A+V2' // A plus V2
+margin: '-Y1 -Z2 - auto' // Negative values, auto
+right: 'A+V2' // Combined tokens
+margin: '- W B+V2 W' // Mix of dash (0), tokens, and math
 ```
 
 ---
@@ -1121,13 +1095,13 @@ margin: "- W B+V2 W"; // Mix of dash (0), tokens, and math
 
 ```js
 // Format: 'colorName opacity lightness'
-background: "black .001"; // black with 0.1% opacity
-background: "deepFir 1 +5"; // deepFir, 100% opacity, +5 lightness
-background: "gray2 0.85 +16"; // gray2, 85% opacity, +16 lightness
-background: "env .25"; // color from design system at 25% opacity
-color: "white 0.65"; // white at 65% opacity
-borderColor: "gray3 0.65"; // gray3 at 65% opacity
-boxShadow: "black .20, 0px, 5px, 10px, 5px"; // shadow with color opacity
+background: 'black .001' // black with 0.1% opacity
+background: 'deepFir 1 +5' // deepFir, 100% opacity, +5 lightness
+background: 'gray2 0.85 +16' // gray2, 85% opacity, +16 lightness
+background: 'env .25' // color from design system at 25% opacity
+color: 'white 0.65' // white at 65% opacity
+borderColor: 'gray3 0.65' // gray3 at 65% opacity
+boxShadow: 'black .20, 0px, 5px, 10px, 5px' // shadow with color opacity
 ```
 
 ---
@@ -1156,10 +1130,10 @@ boxShadow: "black .20, 0px, 5px, 10px, 5px"; // shadow with color opacity
 ```js
 // Format: 'colorName x y depth offset'
 {
-  shadow: "black A A C";
+  shadow: 'black A A C'
 }
 {
-  boxShadow: "black .20, 0px, 5px, 10px, 5px";
+  boxShadow: 'black .20, 0px, 5px, 10px, 5px'
 }
 ```
 
@@ -1169,10 +1143,10 @@ boxShadow: "black .20, 0px, 5px, 10px, 5px"; // shadow with color opacity
 
 ```js
 {
-  transition: "background, defaultBezier, A";
+  transition: 'background, defaultBezier, A'
 }
 {
-  transition: "A defaultBezier opacity";
+  transition: 'A defaultBezier opacity'
 }
 ```
 
@@ -1187,75 +1161,74 @@ Functions use `this` context (bound to the calling element). Define a central fe
 ```js
 // functions/fetch.js — central API wrapper
 export const fetch = async function fetch(
-  method = "GET",
-  path = "",
+  method = 'GET',
+  path = '',
   data,
-  opts = {},
+  opts = {}
 ) {
   const options = {
-    method: method || "POST",
-    headers: { "Content-Type": "application/json" },
-    ...opts,
-  };
-
-  const ENDPOINT = "https://api.example.com/api" + path;
-
-  if (data && (options.method === "POST" || options.method === "PUT")) {
-    options.body = JSON.stringify(data);
+    method: method || 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    ...opts
   }
 
-  const res = await window.fetch(ENDPOINT, options);
+  const ENDPOINT = 'https://api.example.com/api' + path
+
+  if (data && (options.method === 'POST' || options.method === 'PUT')) {
+    options.body = JSON.stringify(data)
+  }
+
+  const res = await window.fetch(ENDPOINT, options)
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`HTTP ${res.status}: ${errorText}`);
+    const errorText = await res.text()
+    throw new Error(`HTTP ${res.status}: ${errorText}`)
   }
 
-  const contentType = res.headers.get("content-type");
-  if (contentType && contentType.includes("application/json"))
-    return res.json();
-  return res.text();
-};
+  const contentType = res.headers.get('content-type')
+  if (contentType && contentType.includes('application/json')) return res.json()
+  return res.text()
+}
 
 // functions/read.js — simple GET wrapper
 export const read = async function read(path) {
-  return await this.call("fetch", "GET", path);
-};
+  return await this.call('fetch', 'GET', path)
+}
 ```
 
 ### CRUD Operations Pattern
 
 ```js
 // functions/add.js — create new item via form
-export const add = async function addNew(item = "network") {
-  const formData = new FormData(this.node);
-  let data = Object.fromEntries(formData);
+export const add = async function addNew(item = 'network') {
+  const formData = new FormData(this.node)
+  let data = Object.fromEntries(formData)
 
-  const res = await this.call("fetch", "POST", "/" + item, data);
-  if (!res) return;
+  const res = await this.call('fetch', 'POST', '/' + item, data)
+  if (!res) return
 
-  this.state.root.quietUpdate({ modal: null });
-  this.call("router", "/item/" + res.id, this.getRoot());
-  this.node.reset();
-};
+  this.state.root.quietUpdate({ modal: null })
+  this.call('router', '/item/' + res.id, this.__ref.root)
+  this.node.reset()
+}
 
 // functions/edit.js — update item
-export const edit = async function edit(item = "network", protocol) {
-  const formData = new FormData(this.node);
-  let data = Object.fromEntries(formData);
+export const edit = async function edit(item = 'network', protocol) {
+  const formData = new FormData(this.node)
+  let data = Object.fromEntries(formData)
 
-  const res = await this.call("fetch", "PUT", `/${protocol}`, data);
-  this.state.root.quietUpdate({ modal: null });
-  this.call("router", "/network/" + protocol, this.getRoot());
-  this.node.reset();
-};
+  const res = await this.call('fetch', 'PUT', `/${protocol}`, data)
+  this.state.root.quietUpdate({ modal: null })
+  this.call('router', '/network/' + protocol, this.__ref.root)
+  this.node.reset()
+}
 
 // functions/remove.js — delete item
-export const remove = async function remove(item = "network", protocol) {
-  const res = await this.call("fetch", "DELETE", "/" + protocol);
-  if (!res) return;
-  this.state.root.quietUpdate({ modal: null });
-  this.call("router", "/dashboard", this.getRoot());
-};
+export const remove = async function remove(item = 'network', protocol) {
+  const res = await this.call('fetch', 'DELETE', '/' + protocol)
+  if (!res) return
+  this.state.root.quietUpdate({ modal: null })
+  this.call('router', '/dashboard', this.__ref.root)
+}
 ```
 
 ### Data Loading & State Initialization
@@ -1265,18 +1238,18 @@ export const remove = async function remove(item = "network", protocol) {
 export const setInitialData = function setInitialData(data = {}) {
   this.state.replace(data, {
     preventUpdate: true,
-    preventUpdateListener: true,
-  });
-  this.update({}, { preventUpdateListener: true });
-};
+    preventUpdateListener: true
+  })
+  this.update({}, { preventUpdateListener: true })
+}
 
 // Usage in a page onRender:
 onRender: (el, s) => {
   window.requestAnimationFrame(async () => {
-    const fleet = await el.call("read");
-    el.call("setInitialData", { fleet });
-  });
-};
+    const fleet = await el.call('read')
+    el.call('setInitialData', { fleet })
+  })
+}
 ```
 
 ### Authentication & Routing Guard
@@ -1285,24 +1258,24 @@ onRender: (el, s) => {
 // functions/auth.js
 export const auth = async function auth() {
   if (this.state.root.success) {
-    if (window.location.pathname === "/") {
-      this.call("router", "/dashboard", this.getRoot());
+    if (window.location.pathname === '/') {
+      this.call('router', '/dashboard', this.__ref.root)
     }
   } else {
-    if (window.location.pathname === "/") {
-      const res = await this.call("fetch", "GET", "", null, {
-        route: "/auth/me",
-      });
+    if (window.location.pathname === '/') {
+      const res = await this.call('fetch', 'GET', '', null, {
+        route: '/auth/me'
+      })
       if (res.success) {
-        this.state.root.update(res);
-        this.call("router", "/dashboard", this.getRoot());
+        this.state.root.update(res)
+        this.call('router', '/dashboard', this.__ref.root)
       }
-      return res;
+      return res
     } else {
-      this.call("router", "/", this.getRoot());
+      this.call('router', '/', this.__ref.root)
     }
   }
-};
+}
 ```
 
 ### Form Submission with Login
@@ -1310,30 +1283,30 @@ export const auth = async function auth() {
 ```js
 // pages/signin.js — async form submission with error handling
 export const signin = {
-  flow: "y",
-  align: "center",
-  height: "100%",
-  margin: "auto",
+  flow: 'y',
+  align: 'center',
+  height: '100%',
+  margin: 'auto',
   LoginWindow: {
     onSubmit: async (ev, el, s) => {
-      ev.preventDefault();
-      s.update({ loading: true });
-      const { identifier, password } = s;
+      ev.preventDefault()
+      s.update({ loading: true })
+      const { identifier, password } = s
       try {
-        const loginResult = await el.sdk.login(identifier, password);
-        await el.call("initializeUserSession", { loginData: loginResult });
-        el.router("/dashboard", el.getRoot());
+        const loginResult = await el.sdk.login(identifier, password)
+        await el.call('initializeUserSession', { loginData: loginResult })
+        el.router('/dashboard', el.getRoot())
       } catch (error) {
-        el.call("openNotification", {
-          title: "Failed to sign in",
+        el.call('openNotification', {
+          title: 'Failed to sign in',
           message: error.message,
-          type: "error",
-        });
-        s.update({ loading: false });
+          type: 'error'
+        })
+        s.update({ loading: false })
       }
-    },
-  },
-};
+    }
+  }
+}
 ```
 
 ---
@@ -1343,28 +1316,28 @@ export const signin = {
 ```js
 // Table rendering rows from state
 export const Table = {
-  extends: "Flex",
-  childExtends: ["NetworkRow", "Link"], // Multiple extends as array
-  width: "100%",
+  extends: 'Flex',
+  childExtends: ['NetworkRow', 'Link'], // Multiple extends as array
+  width: '100%',
   children: (el, s) => s.fleet, // Dynamic children from state
-  childrenAs: "state", // Pass each item as child's state
-  flow: "y",
-};
+  childrenAs: 'state', // Pass each item as child's state
+  flow: 'y'
+}
 
 // List with childProps controlling child structure
 export const ValidatorsList = {
-  childrenAs: "state",
+  childrenAs: 'state',
   childProps: {
-    flexFlow: "y",
+    flexFlow: 'y',
     ValidatorRow: {},
     ValidatorContent: {
-      padding: "B C3 C3",
-      hide: (el, s) => !s.isActive, // Conditional visibility
-    },
+      padding: 'B C3 C3',
+      hide: (el, s) => !s.isActive // Conditional visibility
+    }
   },
-  gap: "Z",
-  flexFlow: "y",
-};
+  gap: 'Z',
+  flexFlow: 'y'
+}
 ```
 
 ---
@@ -1376,37 +1349,37 @@ Modals are rendered via root state and page paths:
 ```js
 // Open modal — set state to page path
 onClick: (ev, el, s) => {
-  s.update({ modal: "/add-network" });
-};
+  s.update({ modal: '/add-network' })
+}
 
 // Modal component — reads root state and renders page content
 export const Modal = {
   props: (el, s) => ({
-    position: "absolute",
-    inset: "0",
-    background: "black 0.95 +15",
-    backdropFilter: "blur(3px)",
+    position: 'absolute',
+    inset: '0',
+    background: 'black 0.95 +15',
+    backdropFilter: 'blur(3px)',
     zIndex: 99,
     ...(s.root?.modal
-      ? { opacity: 1, visibility: "visible" }
-      : { opacity: 0, visibility: "hidden" }),
+      ? { opacity: 1, visibility: 'visible' }
+      : { opacity: 0, visibility: 'hidden' }),
     onClick: (ev, el, s) => {
-      s.root.update({ modal: false });
-      el.lookup("Modal").removeContent();
-    },
+      s.root.update({ modal: false })
+      el.lookup('Modal').removeContent()
+    }
   }),
   content: (el, s) => ({
     Box:
       (s.root.modal && {
         extend: s.root.modal,
-        props: { onClick: (ev) => ev.stopPropagation() },
+        props: { onClick: (ev) => ev.stopPropagation() }
       }) ||
-      {},
-  }),
-};
+      {}
+  })
+}
 
 // Close modal
-this.state.root.quietUpdate({ modal: null });
+this.state.root.quietUpdate({ modal: null })
 ```
 
 ---
@@ -1415,54 +1388,54 @@ this.state.root.quietUpdate({ modal: null });
 
 ```js
 export const addNetwork = {
-  extends: "FormModal",
-  tag: "form",
-  gap: "C",
+  extends: 'FormModal',
+  tag: 'form',
+  gap: 'C',
   onSubmit: async (ev, el, s) => {
-    ev.preventDefault();
-    await el.call("add", "network");
+    ev.preventDefault()
+    await el.call('add', 'network')
   },
-  Hgroup: { H: { text: "Add Network" }, P: { text: "Add new network" } },
+  Hgroup: { H: { text: 'Add Network' }, P: { text: 'Add new network' } },
   Form: {
-    columns: "repeat(2, 1fr)",
-    "@mobileM": { columns: "repeat(1, 1fr)" },
+    columns: 'repeat(2, 1fr)',
+    '@mobileM': { columns: 'repeat(1, 1fr)' },
     children: () => [
       {
-        gridColumn: "1 / span 2",
-        Caption: { text: "Protocol" },
+        gridColumn: '1 / span 2',
+        Caption: { text: 'Protocol' },
         Field: {
           Input: {
-            name: "protocol",
+            name: 'protocol',
             required: true,
-            placeholder: "E.g. Polygon",
-            type: "text",
-          },
-        },
+            placeholder: 'E.g. Polygon',
+            type: 'text'
+          }
+        }
       },
       {
-        Caption: { text: "Network Layer" },
+        Caption: { text: 'Network Layer' },
         Field: {
           Input: null, // Remove default Input
           Select: {
-            padding: "A A2",
-            round: "C1",
-            theme: "field",
+            padding: 'A A2',
+            round: 'C1',
+            theme: 'field',
             Selects: {
-              name: "network_layer",
+              name: 'network_layer',
               required: true,
               children: [
-                { text: "Please select", selected: true, disabled: "disabled" },
-                { text: "L1", value: "L1" },
-                { text: "L2", value: "L2" },
-              ],
-            },
-          },
-        },
-      },
-    ],
+                { text: 'Please select', selected: true, disabled: 'disabled' },
+                { text: 'L1', value: 'L1' },
+                { text: 'L2', value: 'L2' }
+              ]
+            }
+          }
+        }
+      }
+    ]
   },
-  Button: { text: "Save", theme: "primary", type: "submit" },
-};
+  Button: { text: 'Save', theme: 'primary', type: 'submit' }
+}
 ```
 
 ---
@@ -1492,30 +1465,30 @@ export const Table = {
 ```js
 export const AIThread = {
   children: (el, s) => s.thread,
-  childrenAs: "state",
+  childrenAs: 'state',
   childExtends: {
     props: (el, s) => ({
-      alignSelf: s.role === "user" ? "start" : "end",
+      alignSelf: s.role === 'user' ? 'start' : 'end',
       onRender: (el) => {
         const t = setTimeout(() => {
-          el.node.scrollIntoView();
-          clearTimeout(t);
-        }, 35);
-      },
+          el.node.scrollIntoView()
+          clearTimeout(t)
+        }, 35)
+      }
     }),
     content: (el, s) => {
-      if (s.role === "user") {
+      if (s.role === 'user') {
         return {
-          extends: "AIMessage",
-          shape: "bubble",
-          round: "X C C C",
-          Message: { html: (el, s) => s.message },
-        };
+          extends: 'AIMessage',
+          shape: 'bubble',
+          round: 'X C C C',
+          Message: { html: (el, s) => s.message }
+        }
       }
-      return { extends: "P", color: "paragraph", html: (el, s) => s.message };
-    },
-  },
-};
+      return { extends: 'P', color: 'paragraph', html: (el, s) => s.message }
+    }
+  }
+}
 ```
 
 ---
@@ -1544,30 +1517,30 @@ Use underscore suffix to create multiple instances of the same component:
 
 ```js
 export const NetworkRow = {
-  extends: "Grid",
-  templateColumns: "3fr 3fr 3fr 2fr 2fr",
-  gap: "Z2",
-  href: (el, s) => "/network/" + s.protocol,
-  align: "center",
-  padding: "A1 A2",
-  childProps: { gap: "Z2", flexAlign: "center" },
-  borderWidth: "0 0 1px 0",
-  borderStyle: "solid",
-  borderColor: "--theme-document-dark-background",
-  cursor: "pointer",
-  transition: "background, defaultBezier, A",
-  ":hover": { background: "deepFir" },
-  ":active": { background: "deepFir 1 +5" },
+  extends: 'Grid',
+  templateColumns: '3fr 3fr 3fr 2fr 2fr',
+  gap: 'Z2',
+  href: (el, s) => '/network/' + s.protocol,
+  align: 'center',
+  padding: 'A1 A2',
+  childProps: { gap: 'Z2', flexAlign: 'center' },
+  borderWidth: '0 0 1px 0',
+  borderStyle: 'solid',
+  borderColor: '--theme-document-dark-background',
+  cursor: 'pointer',
+  transition: 'background, defaultBezier, A',
+  ':hover': { background: 'deepFir' },
+  ':active': { background: 'deepFir 1 +5' },
   Name: {
-    Avatar: { src: "{{ protocol }}.png", boxSize: "B1" },
-    Title: { tag: "strong", text: (el, s) => s.protocol },
+    Avatar: { src: '{{ protocol }}.png', boxSize: 'B1' },
+    Title: { tag: 'strong', text: (el, s) => s.protocol }
   },
   Env: {
-    childExtends: "NetworkRowLabel",
-    childProps: { background: "env .25" },
-    children: (el, s) => s.parsed?.env,
-  },
-};
+    childExtends: 'NetworkRowLabel',
+    childProps: { background: 'env .25' },
+    children: (el, s) => s.parsed?.env
+  }
+}
 ```
 
 ---
@@ -1576,36 +1549,36 @@ export const NetworkRow = {
 
 ```js
 // dependencies.js — declare external packages with fixed versions
-export default { "chart.js": "4.4.9" };
+export default { 'chart.js': '4.4.9' }
 
 // Chart component using canvas tag with onRender cleanup
 export const Chart = {
-  tag: "canvas",
-  minWidth: "G",
-  minHeight: "D",
+  tag: 'canvas',
+  minWidth: 'G',
+  minHeight: 'D',
   onRender: async (el, s) => {
-    const { Chart } = await import("chart.js");
-    const ctx = el.node.getContext("2d");
+    const { Chart } = await import('chart.js')
+    const ctx = el.node.getContext('2d')
 
     const chart = new Chart(ctx, {
-      type: "line",
+      type: 'line',
       data: {
         /* chart data */
       },
-      options: { responsive: true, maintainAspectRatio: false },
-    });
+      options: { responsive: true, maintainAspectRatio: false }
+    })
 
     const interval = setInterval(() => {
-      chart.update("none");
-    }, 1100);
+      chart.update('none')
+    }, 1100)
 
     // Return cleanup function — called when element is removed
     return () => {
-      clearInterval(interval);
-      chart.destroy();
-    };
-  },
-};
+      clearInterval(interval)
+      chart.destroy()
+    }
+  }
+}
 ```
 
 ---
@@ -1619,18 +1592,18 @@ When `onRender` returns a function, it's called when the element is removed:
   onRender: (el, s) => {
     const interval = setInterval(() => {
       /* ... */
-    }, 1000);
+    }, 1000)
     const handler = (e) => {
       /* ... */
-    };
-    window.addEventListener("resize", handler);
+    }
+    window.addEventListener('resize', handler)
 
     // Cleanup function
     return () => {
-      clearInterval(interval);
-      window.removeEventListener("resize", handler);
-    };
-  };
+      clearInterval(interval)
+      window.removeEventListener('resize', handler)
+    }
+  }
 }
 ```
 
@@ -1640,14 +1613,14 @@ When `onRender` returns a function, it's called when the element is removed:
 
 ```js
 // Lookup by key name
-const Dropdown = element.lookup("Dropdown");
+const Dropdown = element.lookup('Dropdown')
 
 // Lookup by predicate function
-const Dropdown = element.lookup((el) => el.props.isDropdownRoot);
+const Dropdown = element.lookup((el) => el.props.isDropdownRoot)
 
 // Lookup for ancestor navigation
-const modal = el.lookup("Modal");
-modal.removeContent();
+const modal = el.lookup('Modal')
+modal.removeContent()
 ```
 
 ---
@@ -1679,46 +1652,46 @@ modal.removeContent();
 
 ```js
 export const Prompt = {
-  state: { keyword: "", thread: [], images: [] },
-  tag: "form",
+  state: { keyword: '', thread: [], images: [] },
+  tag: 'form',
   onSubmit: (ev, el, s) => {
-    ev.preventDefault();
-    const value = s.keyword;
-    if (!value) return;
+    ev.preventDefault()
+    const value = s.keyword
+    if (!value) return
 
     s.apply((s) => {
-      s.thread.push({ role: "user", message: value });
-      s.keyword = "";
-    });
+      s.thread.push({ role: 'user', message: value })
+      s.keyword = ''
+    })
 
-    el.Relative.Textarea.value = ""; // Direct DOM access for form reset
+    el.Relative.Textarea.value = '' // Direct DOM access for form reset
 
     setTimeout(async () => {
-      const res = await el.call("giveMeAnswer", value);
+      const res = await el.call('giveMeAnswer', value)
       s.apply((s) => {
-        s.thread.push({ role: "agent", message: res.summary });
-      });
-    }, 1000);
+        s.thread.push({ role: 'agent', message: res.summary })
+      })
+    }, 1000)
   },
   Relative: {
     Textarea: {
       placeholder: '"Ask, Search, Prompt..."',
       onInput: (ev, el, s) => {
-        let prompt = el.node.value.trim();
-        s.replace({ keyword: prompt });
+        let prompt = el.node.value.trim()
+        s.replace({ keyword: prompt })
       },
       onKeydown: (ev, el, s) => {
-        if (ev.key === "Enter" && !ev.shiftKey) ev.preventDefault();
-        if (ev.key === "Escape") {
-          ev.stopPropagation();
-          el.node.blur();
+        if (ev.key === 'Enter' && !ev.shiftKey) ev.preventDefault()
+        if (ev.key === 'Escape') {
+          ev.stopPropagation()
+          el.node.blur()
         }
-      },
+      }
     },
-    Submit: { extends: "SquareButton", type: "submit", icon: "check" },
+    Submit: { extends: 'SquareButton', type: 'submit', icon: 'check' }
   },
-  AIThread: { hide: (el, s) => !s.thread.length },
-};
+  AIThread: { hide: (el, s) => !s.thread.length }
+}
 ```
 
 ---
@@ -1727,26 +1700,26 @@ export const Prompt = {
 
 ```js
 export const Uptime = {
-  extends: "Flex",
-  flow: "y",
-  gap: "Z",
-  Title: { fontSize: "Z", text: "Uptime", order: -1 },
+  extends: 'Flex',
+  flow: 'y',
+  gap: 'Z',
+  Title: { fontSize: 'Z', text: 'Uptime', order: -1 },
   Flex: {
-    gap: "X",
-    flow: "row wrap",
-    height: "2.8em",
-    overflow: "hidden",
+    gap: 'X',
+    flow: 'row wrap',
+    height: '2.8em',
+    overflow: 'hidden',
     children: (el, s) => new Array(300).fill({}), // Generate 300 empty children
     childProps: {
-      minWidth: "Z1",
-      boxSize: "Z1",
-      background: "green .3",
-      border: "1px, solid, green",
-      round: "W",
+      minWidth: 'Z1',
+      boxSize: 'Z1',
+      background: 'green .3',
+      border: '1px, solid, green',
+      round: 'W'
     },
-    ":hover > div": { opacity: 0.5 },
-  },
-};
+    ':hover > div': { opacity: 0.5 }
+  }
+}
 ```
 
 ---
@@ -1755,9 +1728,9 @@ export const Uptime = {
 
 ```js
 export const H1 = {
-  extends: "smbls.H1",
-  color: "title",
-};
+  extends: 'smbls.H1',
+  color: 'title'
+}
 ```
 
 ---
@@ -1767,14 +1740,14 @@ export const H1 = {
 ```js
 // Define a custom property transformer
 export default function paddingEm(val, element, state, context) {
-  const { unit } = element.props;
-  const paddingEm = unit === "em" ? val / 16 + "em" : val;
-  return { paddingEm };
+  const { unit } = element.props
+  const paddingEm = unit === 'em' ? val / 16 + 'em' : val
+  return { paddingEm }
 }
 
 // Use in components
 {
-  paddingEm: 12;
+  paddingEm: 12
 }
 ```
 
@@ -1817,15 +1790,15 @@ smbls sync
 export default {
   FONT: {
     Inter: {
-      url: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900",
+      url: 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900',
       isVariable: true,
-      fontWeight: "100 900",
-    },
+      fontWeight: '100 900'
+    }
   },
   FONT_FAMILY: {
-    primary: "Inter, sans-serif",
-  },
-};
+    primary: 'Inter, sans-serif'
+  }
+}
 ```
 
 ### Grid Configuration
@@ -1834,10 +1807,10 @@ export default {
 export default {
   GRID: {
     columns: 12,
-    gutter: "A",
-    maxWidth: "1200px",
-  },
-};
+    gutter: 'A',
+    maxWidth: '1200px'
+  }
+}
 ```
 
 ### Icon System
@@ -1846,11 +1819,11 @@ export default {
 // Icons are defined as SVG strings with camelCase keys
 export default {
   ICONS: {
-    arrowDown: "<svg>...</svg>",
-    chevronLeft: "<svg>...</svg>",
-    search: "<svg>...</svg>",
-  },
-};
+    arrowDown: '<svg>...</svg>',
+    chevronLeft: '<svg>...</svg>',
+    search: '<svg>...</svg>'
+  }
+}
 ```
 
 ### Media Query Configuration
@@ -1859,15 +1832,15 @@ export default {
 // Media queries are responsive breakpoints
 export default {
   MEDIA: {
-    mobileXS: "320px",
-    mobileS: "375px",
-    mobileM: "425px",
-    tablet: "768px",
-    tabletM: "960px",
-    laptop: "1024px",
-    desktop: "1440px",
-  },
-};
+    mobileXS: '320px',
+    mobileS: '375px',
+    mobileM: '425px',
+    tablet: '768px',
+    tabletM: '960px',
+    laptop: '1024px',
+    desktop: '1440px'
+  }
+}
 ```
 
 ### Shape Configuration
@@ -1884,9 +1857,9 @@ export default {
     },
     bubble: {
       /* rounded bubble shape */
-    },
-  },
-};
+    }
+  }
+}
 ```
 
 ### Animation Configuration
@@ -1897,17 +1870,17 @@ export default {
   ANIMATION: {
     fadeIn: {
       from: { opacity: 0 },
-      to: { opacity: 1 },
+      to: { opacity: 1 }
     },
     shake: {
-      "0%": { transform: "translateX(0)" },
-      "25%": { transform: "translateX(-5px)" },
-      "50%": { transform: "translateX(5px)" },
-      "75%": { transform: "translateX(-5px)" },
-      "100%": { transform: "translateX(0)" },
-    },
-  },
-};
+      '0%': { transform: 'translateX(0)' },
+      '25%': { transform: 'translateX(-5px)' },
+      '50%': { transform: 'translateX(5px)' },
+      '75%': { transform: 'translateX(-5px)' },
+      '100%': { transform: 'translateX(0)' }
+    }
+  }
+}
 ```
 
 ### Timing Configuration
@@ -1919,9 +1892,9 @@ export default {
     base: 300,
     ratio: 1.618,
     // Custom bezier curves
-    defaultBezier: "cubic-bezier(.19,.22,.4,.86)",
-  },
-};
+    defaultBezier: 'cubic-bezier(.19,.22,.4,.86)'
+  }
+}
 ```
 
 ### Unit Configuration
@@ -1930,8 +1903,8 @@ export default {
 // CSS unit configuration
 export default {
   // Unit options: 'em', 'px', 'vmax'
-  unit: "em",
-};
+  unit: 'em'
+}
 ```
 
 ---
@@ -1968,371 +1941,218 @@ export default {
 
 ---
 
-## Conventions & Best Practices
+## CRITICAL: Icon Rendering in Buttons (Verified Patterns)
 
-These conventions capture practical patterns that should be applied alongside the strict rules above.
+This section documents **verified working patterns** for rendering icons. Incorrect patterns cause silent failures where buttons render as empty shapes.
 
-### 1. No `props:` Wrapper (v3)
+### The `Icon` Component Limitation
 
-Props must be flattened at the component root level, never wrapped.
-
-```js
-// Wrong
-{ props: { padding: 'A', color: 'primary' } }
-
-// Right
-{ padding: 'A', color: 'primary' }
-```
-
-### 2. Use `getRoot()` not `__ref.root`
-
-`__ref` is an internal private API. Always use the public methods.
+The `Icon` component (sprite-based) **does NOT render** when nested inside `Button` or `Flex+tag:button` elements. This is a known limitation.
 
 ```js
-// Wrong
-el.__ref.root;
-this.__ref.root;
-
-// Right
-el.getRoot();
-el.getRootState();
-```
-
-### 3. Component Naming with Suffixes
-
-- Use `Icon_2` instead of `Icon2` so the framework properly extends the `Icon` component
-- Underscore-separated suffixes (`_2`, `_3`, etc.) ensure child components inherit from the base component
-- Same applies for all components: `Button_2`, `Text_3`, etc.
-
-### 4. Icon `name` prop, not `icon`
-
-```js
-// Wrong
-Icon: { extends: 'Icon', icon: 'search' }
-
-// Right
-Icon: { name: 'search' }
-```
-
-### 5. Use Semantic Atoms Instead of `tag`
-
-| Instead of      | Use                                     |
-| --------------- | --------------------------------------- |
-| `tag: 'a'`      | `extends: 'Link'` (has built-in router) |
-| `tag: 'button'` | `extends: 'Button'` or key as `Button`  |
-| `tag: 'img'`    | `extends: 'Img'` or key as `Img`        |
-| `tag: 'input'`  | `extends: 'Input'` or key as `Input`    |
-| `tag: 'span'`   | Use `text` property directly            |
-
-15 built-in atoms: `Text`, `Box`, `Flex`, `Grid`, `Link`, `Input`, `Radio`, `Checkbox`, `Svg`, `Icon`, `IconText`, `Button`, `Img`, `Iframe`, `Video`
-
-PascalCase keys auto-map to matching atoms/HTML tags, so explicit `tag` is redundant.
-
-### 6. PascalCase Key Auto-Mapping (Redundant extends)
-
-When the key name matches a built-in component, `extends` is redundant:
-
-```js
-// Wrong — redundant extends
-Icon: { extends: 'Icon', name: 'search' }
-Img: { extends: 'Img', src: '...' }
-
-// Right — auto-mapped from key
-Icon: { name: 'search' }
-Img: { src: '...' }
-```
-
-Keys like `SearchIcon` or `MainImg` DO need explicit `extends`.
-
-**Defaults:** `extends: 'Text'` and `extends: 'Box'` are defaults — never specify them.
-
-### 7. Flex Auto-Inference
-
-`extends: 'Flex'` is redundant when `flow` or `align` is present — Flex is auto-inferred. Only use explicit `extends: 'Flex'` when neither `flow` nor `align` is set.
-
-```js
-// Wrong — redundant
-{ extends: 'Flex', flow: 'y', align: 'center center' }
-
-// Right — auto-inferred
-{ flow: 'y', align: 'center center' }
-
-// Right — needed (no flow/align)
-{ extends: 'Flex', gap: 'A' }
-```
-
-### 8. Grid Usage
-
-- Never combine `extends: 'Flex'` with `display: 'grid'`
-- Components with `gridTemplateColumns` / grid properties that aren't keyed as `Grid` must use `extends: 'Grid'`
-- A key named `Grid` auto-maps, so `extends: 'Grid'` is redundant on it
-
-```js
-// Wrong
-PlansGrid: { extends: 'Flex', display: 'grid', gridTemplateColumns: '...' }
-
-// Right
-PlansGrid: { extends: 'Grid', gridTemplateColumns: '...' }
-
-// Right — key auto-maps
-Grid: { gridTemplateColumns: '...' }
-```
-
-### 9. H1-H6 Key Shorthand
-
-Heading keys (H1, H2, H3, etc.) imply their tag. No need for explicit `tag: 'h1'` etc.
-
-```js
-// Wrong
-H: { tag: 'h2', text: 'Title' }
-
-// Right
-H2: { text: 'Title' }
-```
-
-**Caveat:** Inside components rendered via `childExtends`, use descriptive keys like `Title: { tag: 'h3' }` instead of bare `H3` to avoid recursive element resolution.
-
-### 10. Hgroup Usage
-
-Use `Hgroup` only for heading + paragraph pairings. Solo headings should not be wrapped.
-
-Inside `Hgroup`, always use `H` — not `H1`, `H2`, etc. The Hgroup context determines the heading level.
-
-```js
-// Right — H + P pairing
-Hgroup: {
-  H: { text: 'Title' },
-  P: { text: 'Description' }
+// BROKEN — Icon will NOT render inside Button or Flex+tag:button
+MyBtn: {
+  extends: 'Button',
+  Icon: { extends: 'Icon', name: 'heart' }  // ❌ Silent failure
 }
 
-// Wrong — H1/H2/H3 inside Hgroup
-Hgroup: {
-  H1: { text: 'Title' },
-  P: { text: 'Description' }
+MyBtn: {
+  extends: 'Flex',
+  tag: 'button',
+  Icon: { extends: 'Icon', name: 'heart' }  // ❌ Silent failure
+}
+```
+
+### CORRECT: Use `Svg` Atom with `html` Prop
+
+The `Svg` atom with the `html` prop is the **only reliable way** to render icons inside button-like elements. The child key **must be named `Svg`** (not `FlameIcon`, `MyIcon`, etc.) for auto-resolution to work.
+
+```js
+// CORRECT — Svg atom with html prop inside Flex+tag:button
+MyBtn: {
+  extends: 'Flex',
+  tag: 'button',
+  flexAlign: 'center center',
+  cursor: 'pointer',
+  background: 'transparent',
+  border: 'none',
+
+  Svg: {
+    viewBox: '0 0 24 24',
+    width: '22',
+    height: '22',
+    color: 'flame',
+    html: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/>'
+  }
+}
+```
+
+### `html` Prop Only Works on `Svg` Atom
+
+The `html` prop sets `innerHTML` **only on the `Svg` atom**. It does NOT work on `Box`, `Flex`, or `Button`.
+
+```js
+// BROKEN — html prop ignored on Flex/Box/Button
+{ extends: 'Flex', html: '<svg>...</svg>' }  // ❌
+
+// CORRECT — html prop works on Svg atom
+{ Svg: { viewBox: '0 0 24 24', html: '<path .../>' } }  // ✅
+```
+
+### Standalone Svg (not inside a button)
+
+When using `Svg` as a standalone element (e.g., logo icon in a header), the key name must be `Svg` or use `extends: 'Svg'`:
+
+```js
+LogoArea: {
+  extends: 'Flex',
+  flexAlign: 'center center',
+  gap: 'Z',
+
+  Svg: {                          // Key IS 'Svg' — auto-resolves
+    viewBox: '0 0 24 24',
+    width: '22', height: '22',
+    color: 'flame',
+    html: '<path d="..." fill="currentColor"/>'
+  },
+
+  LogoText: { extends: 'Text', text: 'myapp' }
+}
+```
+
+### Nav Tabs with Icon + Label
+
+For navigation tabs that need both an icon and a text label:
+
+```js
+NavItem: {
+  extends: 'Flex',
+  tag: 'button',
+  flow: 'y',
+  flexAlign: 'center center',
+  gap: 'Y',
+  flex: 1,
+  background: 'transparent',
+  border: 'none',
+  cursor: 'pointer'
+},
+
+DiscoverTab: {
+  extends: 'NavItem',
+  Svg: {
+    viewBox: '0 0 24 24', width: '22', height: '22', color: 'flame',
+    html: '<path d="..." fill="currentColor"/>'
+  },
+  Label: { extends: 'Text', text: 'Discover', fontSize: 'X', color: 'flame' }
+}
+```
+
+---
+
+## CRITICAL: `el.call()` Function Context
+
+When a function is called via `el.call('functionName', arg1, arg2)`:
+
+- The **DOMQL element** is passed as `this` inside the function — NOT as the first argument
+- `arg1`, `arg2` etc. are the additional arguments
+- Access the DOM node via `this.node` (not `this.__node`)
+
+```js
+// functions/myFunction.js
+export const myFunction = function myFunction (arg1) {
+  const el = this           // 'this' IS the DOMQL element
+  const node = this.node    // DOM node
+  // arg1 is the first argument passed to el.call('myFunction', arg1)
 }
 
-// Wrong — solo heading in Hgroup
-Hgroup: { H: { text: 'Section Title' } }
-
-// Right — solo heading (outside Hgroup, use H1-H6)
-H2: { text: 'Section Title' }
+// In component — call without passing el as argument
+onClick: (e, el) => el.call('myFunction', someArg)  // ✅ correct
+onClick: (e, el) => el.call('myFunction', el, someArg)  // ❌ wrong — el passed twice
 ```
 
-### 11. Event Handlers & Casing
+### Preventing Double Initialization in `onRender`
 
-- Use `onClick: (event, el, s) => { ... }` — not `on: { click: ... }`
-- Same applies for all events: `onKeydown`, `onSubmit`, `onError`, etc.
-- Use camelCase for multi-word event handlers:
+`onRender` fires on every render cycle. Use a guard flag to run imperative logic only once:
 
 ```js
-// Wrong
-(onPointerdown, onPointermove, onPointerup);
+CardStack: {
+  extends: 'Box',
+  flex: 1,
+  position: 'relative',
 
-// Right
-(onPointerDown, onPointerMove, onPointerUp);
+  onRender: (el) => {
+    if (el.__initialized) return   // Guard against double-init
+    el.__initialized = true
+    el.call('initMyLogic')
+  }
+}
 ```
 
-### 12. Use Shorthand Props
-
-- `flow: 'y'` instead of `flexFlow: 'column'`
-- `flow: 'x'` instead of `flexFlow: 'row'`
-- `align: 'center space-between'` instead of `alignItems` + `justifyContent`
-- `round: 'B'` instead of `borderRadius`
-- `wrap: 'wrap'` instead of `flexWrap: 'wrap'`
-- `size: 'C'` instead of `width` + `height`
-- Do not use raw `px` values for sizing/spacing — use design system tokens instead
-  - `maxWidth: 'H'` not `maxWidth: '500px'`
-  - `minWidth: 'E1'` not `minWidth: '140px'`
-  - `round: 'F'` not `round: '9999px'` (for pill shapes)
-  - Exception: CSS syntax values like `border: '1px solid ...'` and `boxShadow` keep px
-
-### 13. childExtends as String + childProps
-
-Use string references for `childExtends`, not inline objects. Pair with `childProps` for shared styling.
+### Accessing DOM Node in Functions
 
 ```js
-// Wrong — inline object
-childExtends: { tag: 'button', padding: 'A', ... }
+export const initMyLogic = function initMyLogic () {
+  const node = this.node                        // ✅ correct
+  if (!node || !node.appendChild) return        // Guard for safety
 
-// Right — string + childProps
-childExtends: 'Button',
-childProps: { padding: 'A', ... }
+  // Imperative DOM manipulation
+  node.innerHTML = ''
+  const div = document.createElement('div')
+  node.appendChild(div)
+}
 ```
 
-- Do not mix `extends` and props inside `childExtends` — keep `childExtends` as a string and move props to `childProps`
-- Do not use `childExtends` for inline prop objects without `extends` — use `childProps` instead
-- `childExtends` should always be a string (component name), never an object
+---
 
-### 14. `childrenAs: 'state'` for State Collections
+## CRITICAL: Flex Layout Properties
 
-Pass data as state to children using `childrenAs: 'state'`. No need to `.map()` and wrap each item.
+Use `flexAlign` (not `align`) for combined alignItems + justifyContent shorthand. Use `flow` (not `flexFlow`) for direction shorthand.
 
 ```js
-// Wrong — manual .map wrapping
-children: plans.map(plan => ({ PlanCard: { state: plan } }))
+// CORRECT
+{ extends: 'Flex', flexAlign: 'center center', flow: 'y' }
 
-// Wrong — .map with state wrapper
-childExtends: 'FeatureCard',
-children: items.map(item => ({ state: item }))
+// Also valid (explicit)
+{ extends: 'Flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }
 
-// Right — childrenAs handles state passing
-childExtends: 'PlanCard',
-childrenAs: 'state',
-children: plans
+// WRONG — 'align' is not a valid shorthand in v3
+{ extends: 'Flex', align: 'center center' }  // ❌ has no effect
 ```
 
-Obsolete patterns — never use:
+---
 
-| Obsolete                              | Replacement                                    |
-| ------------------------------------- | ---------------------------------------------- |
-| `$stateCollection`                    | `children: []` + `childrenAs: 'state'`         |
-| `$propsCollection`                    | `children: []`                                 |
-| `$collection`                         | `children: []` + `childrenAs: 'element'`       |
-| `.map(x => ({ Comp: { state: x } }))` | `childExtends: 'Comp'` + `childrenAs: 'state'` |
+## CRITICAL: Tab/View Switching with DOM IDs
 
-### 15. State Functions
-
-- Pattern: `(el, s) => ...` where `el` is element, `s` is state
-- Use `s.update({})` to update state
-- Use `el.call('functionName', ...args)` to call registered functions
-
-### 16. Declarative Over Imperative
-
-Avoid direct DOM manipulation (`el.node.style.x = ...`). Drive appearance through state and computed props.
+For multi-tab layouts where views are shown/hidden imperatively, assign `id` props to views and tabs, then use `document.getElementById` in switch functions:
 
 ```js
-// Wrong
-onClick: (ev, el) => { el.node.style.background = 'red' }
+// In page definition — assign ids
+ContentArea: {
+  DiscoverView: { id: 'view-discover', position: 'absolute', inset: 0, display: 'flex' },
+  MessagesView: { id: 'view-messages', position: 'absolute', inset: 0, display: 'none' }
+},
 
-// Right — computed from state
-background: (el, s) => s.active ? 'red' : 'gray',
-onClick: (ev, el, s) => { s.update({ active: true }) }
-```
-
-### 17. No `style:` Wrapper for Pseudo-states
-
-Pseudo-states go at the component root level:
-
-```js
-// Wrong
-style: { ':hover': { background: 'blue' } }
-
-// Right
-':hover': { background: 'blue' }
-```
-
-### 18. Design Tokens Over Hardcoded Colors
-
-Use design system color tokens instead of hex/rgba values:
-
-```js
-// Wrong
-color: "#2563EB";
-background: "rgba(59,130,246,0.4)";
-
-// Right
-color: "blue600";
-background: "blue500 .4";
-```
-
-**Gradient convention:** Inside CSS gradient strings, token names are not resolved automatically. Always use `var(--color-ColorName)`. Note: opacity inside gradient strings is not yet supported.
-
-```js
-// Wrong
-background: "linear-gradient(to right, blue500, blue400)";
-
-// Right
-background: "linear-gradient(to right, var(--color-blue500), var(--color-blue400))";
-```
-
-### 19. Element Lookup
-
-- `el.getRoot()` — access root element
-- `el.getRootState()` — access root state
-- `el.lookup('ComponentName')` — only for PascalCase registered components, and only for accessing **props** on a parent component
-- Never use `el.parent.parent.parent...` chains — use `el.lookup()` or `el.closest()`
-
-### 20. State and Scope Inheritance — No Lookup Needed
-
-Children that don't define their own `state` or `scope` inherit from the nearest ancestor that does. No need to `el.lookup('ParentComponent')` to access parent state or scope.
-
-```js
-// Wrong — unnecessary lookup for state
-onClick: (ev, el, s) => {
-  const ctrl = el.lookup('MyComponent')
-  ctrl.state.update({ open: true })
-  ctrl.scope.handleAction(ctrl, ctrl.state)
+BottomNav: {
+  DiscoverTab: {
+    id: 'tab-discover',
+    onClick: (e, el) => el.call('switchTab', 'discover')
+  }
 }
 
-// Wrong — fragile parent chain
-if: (el, s) => s.parent?.parent?.loading
-
-// Right — state and scope are inherited
-onClick: (ev, el, s) => {
-  s.update({ open: true })
-  el.scope.handleAction(el, s)
+// functions/switchTab.js
+export const switchTab = function switchTab (tab) {
+  const views = ['discover', 'messages', 'likes', 'profile']
+  views.forEach(v => {
+    const viewEl = document.getElementById('view-' + v)
+    const navEl = document.getElementById('tab-' + v)
+    if (viewEl) viewEl.style.display = v === tab ? 'flex' : 'none'
+    if (navEl) {
+      const svg = navEl.querySelector('svg')
+      const span = navEl.querySelector('span')
+      const color = v === tab ? '#FF4458' : '#777'
+      if (svg) svg.style.color = color
+      if (span) span.style.color = color
+    }
+  })
 }
-if: (el, s) => s.loading
 ```
-
-Lookup is still needed to access **props** on a parent component (props don't inherit).
-
-### 21. PascalCase Keys Create Children — Lowercase Vendor Prefixes
-
-Any property starting with a capital letter is treated as a child component, not a CSS property. Vendor-prefixed CSS properties must start with lowercase:
-
-```js
-// Wrong — creates a child element named "WebkitBackgroundClip"
-WebkitBackgroundClip: "text";
-WebkitLineClamp: "4";
-WebkitBoxOrient: "vertical";
-
-// Right — treated as CSS property
-webkitBackgroundClip: "text";
-webkitLineClamp: "4";
-webkitBoxOrient: "vertical";
-```
-
-### 22. Component Barrel Exports
-
-Use `export * from` (not `export * as`) in component index files:
-
-```js
-// Wrong
-export * as SearchBar from "./SearchBar.js";
-
-// Right
-export * from "./SearchBar.js";
-```
-
-### 23. No Imports Between Project Files
-
-- Components reference each other by PascalCase key name in the tree
-- Functions are called via `el.call('functionName', args)`
-- Never `import { Component } from './Component.js'` for usage in other components
-
-### 24. v3 Syntax Only
-
-- `extends` not `extend`
-- `childExtends` not `childExtend`
-- `onClick: fn` not `on: { click: fn }`
-- Props flattened, not wrapped in `props: {}`
-
-### 25. Button Reset Styling
-
-- Buttons in custom themes need `background: 'transparent'`, `border: 'none'`, and explicit `color`
-- Browsers apply default button styles (gray bg, border) that can hide content on dark backgrounds
-
-### 26. Responsive Design
-
-- Use `@mobileM` media query for mobile adjustments
-- Scale down font sizes and padding proportionally
-- Keep layout structure consistent, just adjust spacing
-
-### 27. Adding Icons to Design System
-
-- All new icons added to `ICONS.js` must be 24x24 (`width="24" height="24"`)
-- If the source SVG has a different size, keep the original `viewBox` but set `width="24" height="24"` on the `<svg>` element
-- Monocolor icons: omit `fill`/`stroke` or use `currentColor` so the framework can control color via CSS
-- Multicolor icons: keep hardcoded colors as-is
-- If the original icon uses pure white (`#fff`) or black (`#000`) fills/strokes, replace them with `currentColor`

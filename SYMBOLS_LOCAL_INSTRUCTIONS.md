@@ -234,13 +234,14 @@ export default [
 **state/index.js:**
 
 ```javascript
-import metrics from "./metrics.js";
-
 export default {
-  metrics,
-  // ...
+  metrics: [],
+  user: {},
+  // ... initial state values inline — no imports
 };
 ```
+
+> ⚠️ Do NOT import from other state files. Define all initial state inline in a single `state.js` or `state/index.js`.
 
 **Key Rules:**
 
@@ -608,8 +609,12 @@ No JavaScript `import`/`require` statements for components, functions, or method
 **[components/index.js](smbls/components/index.js):**
 
 ```javascript
-export * as ComponentName from "./ComponentName.js";
+// CORRECT — flat re-exports, NOT 'export * as'
+export * from "./ComponentName.js";
+export * from "./AnotherComponent.js";
 ```
+
+> ⚠️ NEVER use `export * as ComponentName from '...'` — it wraps exports in a namespace object and breaks component resolution entirely.
 
 **[functions/index.js](smbls/functions/index.js):**
 
@@ -1203,7 +1208,8 @@ export const profile = {
 **4. Register in** `components/index.js`:
 
 ```javascript
-export * as UserCard from "./UserCard.js";
+// CORRECT — flat re-export
+export * from "./UserCard.js";
 ```
 
 ---
@@ -1397,9 +1403,3 @@ export const logClick = function (count) {
 ```
 
 This architecture ensures **true independence** of components, **zero runtime compilation**, and **environment agnostic** execution.
-
----
-
-## Symbols Feedback Conventions
-
-Supplemental conventions are merged into [GENERAL.md](GENERAL.md).
