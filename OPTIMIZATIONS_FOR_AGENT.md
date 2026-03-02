@@ -37,7 +37,6 @@ Do not simulate meaning with generic divs or spans.
 - Use DOMQL v3 syntax exclusively.
 - Set HTML attributes via `attr`.
 - Prefix event handlers with `on`.
-- Avoid inheritance shortcuts like `extends Box` or `extends Text`.
 - Ensure all critical content is server-rendered and visible in the initial HTML.
 
 ---
