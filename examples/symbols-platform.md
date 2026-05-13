@@ -16,7 +16,7 @@ The Symbols platform itself uses this template. This document maps the abstract 
 
 The Symbols platform's workspace database is a Supabase project with the canonical schema (`tickets`, `ticket_comments`, `ticket_dependencies`, `agent_presence`, `agent_activity_log`, `v_agent_queue`, plus the RPCs `claim_and_dispatch`, `open_resolution_ticket`, `release_ticket`, `find_similar_resolved`, `record_routing_decision`, `bulk_route_tickets`, `upsert_pattern`).
 
-All agent traffic flows through the workspace wrapper at `next.api.symbols.app/workspace-project/sb/*` rather than hitting Supabase directly. The wrapper enforces tenant isolation, rate limits, and audit logging.
+All agent traffic flows through the workspace wrapper at `dev.api.symbols.app/workspace-project/sb/*` rather than hitting Supabase directly. The wrapper enforces tenant isolation, rate limits, and audit logging.
 
 ## Approval gate configuration
 
@@ -47,7 +47,7 @@ If you're standing up a new tenant on the Symbols platform, the platform's own `
 - The template's `contracts/EPIC_AGENT_CONTRACT.md` (abstract) <-> the platform's `.claude/agents/EPIC_AGENT_CONTRACT.md` (Symbols-specific).
 - The template's `agents/epic-agent.template.md` <-> any of the ~30 epic files (`server.md`, `cli.md`, `design.md`).
 
-Where the template uses `{{TENANT_API_URL}}`, the Symbols deployment has `https://next.api.symbols.app`. Where the template uses `{{TENANT_WORKSPACE_ID}}`, Symbols uses `69e5911201b0ef47b675463f`. The substitution pattern is otherwise identical.
+Where the template uses `{{TENANT_API_URL}}`, the Symbols deployment has `https://dev.api.symbols.app`. Where the template uses `{{TENANT_WORKSPACE_ID}}`, Symbols uses `69e5911201b0ef47b675463f`. The substitution pattern is otherwise identical.
 
 ## What Symbols does that isn't in the template
 
