@@ -1,0 +1,187 @@
+# Tenant agent configuration.
+#
+# Copy this file to your tenant repo root as `agents.config.yaml`, fill in the
+# placeholders, and use it as the input to the install steps (see INSTALL.md).
+
+tenant:
+  name: "Acme"                                     # display name
+  workspace_id: ""                                 # primary key in your backing store
+  api_url: "https://api.acme.example.com"          # REST + RPC wrapper URL (NOT raw Supabase)
+  raw_db_url: "https://abc.supabase.co"            # raw Supabase URL — realtime WS only
+  owner_email: "owner@acme.example.com"            # approver for ASK-USER tickets
+  domain: "acme.example.com"                       # used to build agent identities
+
+# Approval gates — see contracts/APPROVAL_GATES.md.
+# Setting `enabled: false` disables ALL gates (not recommended).
+# Individual triggers can be toggled separately.
+approval_gates:
+  enabled: true
+  triggers:
+    production_deploy: true
+    schema_migration: true
+    billing_change: true
+    permission_broadening: true
+    external_integration: true
+    destructive_ops: true
+    cross_cutting: true
+    ambiguous_direction: true
+  # Categories requiring an exact phrase like "deploy to production: 1234"
+  # (generic "approved" / "yes" does not count).
+  strict_phrase_categories:
+    - production_deploy
+    - billing_change
+  # Allowlist of emails whose comments count as approval. Almost always
+  # just the owner_email above; multiple is uncommon.
+  approvers:
+    - "owner@acme.example.com"
+
+# Orchestration layer — the four named roles.
+orchestration:
+  chuvak:
+    identity: "chuvak-agent@acme.example.com"
+    model: "claude-opus-4-7"                       # decisions warrant the smarter model
+    enabled: true
+    max_sync_wait_seconds: 300                     # how long Chuvak waits on a Temo sync chain
+    tick_interval_seconds: 300                     # autonomous tick cadence
+    approval_reminder_after_hours: 24              # reminder comment if approval stalls
+
+  temo:
+    identity: "temo-agent@acme.example.com"
+    model: "claude-sonnet-4-6"
+    enabled: true
+    max_dispatch_wait_seconds: 600                 # how long Temo waits on an epic agent
+    tick_interval_seconds: 120                     # autonomous tick cadence
+    max_recursion_depth: 3                         # chain depth before escalating
+
+  watcher:
+    identity: "watcher-agent@acme.example.com"
+    model: "claude-haiku-4-5"                      # analytics is cheap; haiku is fine
+    enabled: true
+    tick_interval_seconds: 300
+    max_observations_per_tick: 5
+    dedup_window_hours: 6
+    stuck_threshold: 5                             # stuck-ticket count that triggers anomaly
+    source_down_threshold_minutes: 60
+
+  qa:
+    identity: "qa-agent@acme.example.com"
+    model: "claude-sonnet-4-6"
+    enabled: true
+    smoke_interval_seconds: 900                    # 15 min canonical-flow rotation
+    smoke_flows_per_tick: 3
+
+  ux:
+    identity: "ux-agent@acme.example.com"
+    model: "claude-sonnet-4-6"
+    enabled: true
+    # When to auto-invoke UX in pair mode before dispatching an epic agent.
+    pair_triggers:
+      label_match: ["ux", "flow", "a11y", "copy", "microcopy"]
+      keyword_match: ["flow", "form", "dialog", "modal", "onboarding", "permission", "auth", "signup", "checkout", "empty state", "error state", "loading state"]
+      file_hint_match: ["docs/ux/**", "packages/a11y/**", "docs/copy/**"]
+    # UX-owned scope (when ticket is in scope, ux ships primary in Mode A).
+    scope_paths:
+      - "docs/ux/**"
+      - "packages/a11y/**"
+      - "docs/copy/**"
+
+  ui_design:
+    identity: "ui-design-agent@acme.example.com"
+    model: "claude-sonnet-4-6"
+    enabled: true
+    # When to auto-invoke UI Design in pair mode.
+    pair_triggers:
+      label_match: ["ui", "design", "visual", "brand", "frontend"]
+      keyword_match: ["color", "typography", "font", "spacing", "layout", "hero", "banner", "card", "button", "icon", "animation", "motion", "theme", "dark mode"]
+      file_hint_match: ["designSystem/**", "components/**", "pages/**", "snippets/**", "packages/brand/**", "packages/design-system/**"]
+    # UI Design-owned scope (when ticket is in scope, ships primary in Mode A).
+    scope_paths:
+      - "packages/design-system/**"
+      - "packages/brand/**"
+      - "packages/shared-ui/**"
+      - "designSystem/**"
+
+# Watcher signal sources — what to scan, how often, severity thresholds.
+watcher:
+  signals:
+    - name: "errors"
+      kind: "error_spike"
+      source: "<your error stream URL or query>"
+      interval_seconds: 60
+      threshold:
+        min_occurrences_per_hour: 3
+        baseline_multiplier: 2.0
+    - name: "latency"
+      kind: "latency_regression"
+      source: "<your metrics URL or query>"
+      interval_seconds: 300
+      threshold:
+        p95_multiplier: 2.0
+        sustained_buckets: 3
+    # Add more signals here per your stack (cost, conversion, integration health, etc.).
+
+# QA canonical flows — see agents/qa.md § Mode B.
+qa:
+  test_user:
+    email: "qa@acme.example.com"
+    password_env: "QA_TEST_USER_PASSWORD"          # read from env, never inlined
+  canonical_flows:
+    - name: "user-login"
+      url: "https://app.acme.example.com/login"
+      routing_hint: "auth"
+      steps:
+        - { fill: { selector: "input[name=email]", value_env: "QA_TEST_USER_EMAIL" } }
+        - { fill: { selector: "input[name=password]", value_env: "QA_TEST_USER_PASSWORD" } }
+        - { click: { selector: "button[type=submit]" } }
+        - { wait_for: { selector: ".dashboard-greeting" } }
+      assertions:
+        - { text_contains: { selector: ".dashboard-greeting", value: "Welcome" } }
+        - { no_console_errors: true }
+    # Add more flows. Aim for 5-15 high-signal flows covering the tenant's
+    # primary value paths.
+
+# Epic agents — one entry per scope you want spawned. Each entry generates an
+# agent file from agents/epic-agent.template.md.
+epics:
+  - key: "server"
+    name: "SERVER"
+    description: "Backend / API epic — owns server-side routes, models, auth."
+    identity: "server-agent@acme.example.com"
+    model: "claude-sonnet-4-6"
+    scope_paths:
+      - "server/**"
+    tools: "Read, Edit, Write, Bash, Grep, Glob"
+    escalation_triggers: |
+      - Schema migration touching a populated column.
+      - New auth provider added.
+      - Stripe webhook semantic change.
+
+  - key: "content"
+    name: "CONTENT"
+    description: "Content / CMS epic — owns the content collection schema and editor."
+    identity: "content-agent@acme.example.com"
+    model: "claude-sonnet-4-6"
+    scope_paths:
+      - "content/**"
+      - "cms/**"
+    tools: "Read, Edit, Write, Bash, Grep, Glob"
+    escalation_triggers: |
+      - New content type added (requires editor UI work in shared epic).
+      - Cross-locale changes.
+
+  # Add as many epics as your tenant has scopes. Each one becomes
+  # .claude/agents/<key>.md after the install copy step.
+
+# Scope map — generated alongside the epic files. Source of truth: SCOPE_MAP.md
+# in the tenant repo. This `scope_map` block is for INSTALL.md to scaffold the
+# initial routing rows; humans edit SCOPE_MAP.md going forward.
+scope_map:
+  url_routes:
+    - { host: "app.acme.example.com", path: "/admin/*", agent_key: "admin" }
+    - { host: "api.acme.example.com", path: "/*", agent_key: "server" }
+  path_routes:
+    - { pattern: "server/**", agent_key: "server" }
+    - { pattern: "content/**", agent_key: "content" }
+    - { pattern: "infrastructure/**", agent_key: "infra" }
+    - { pattern: ".github/workflows/**", agent_key: "infra" }
+    - { pattern: "docs/**", agent_key: "docs" }
