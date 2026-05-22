@@ -1,0 +1,35 @@
+{
+  "name": "@symbo.ls/skills",
+  "version": "0.1.0",
+  "description": "Symbols Skills — reusable, multi-tier agentic orchestration template. Drop into any tenant repo; get a five-role hierarchy (Simone · Chuvak · Temo · Watcher · epic agents) wired to Supabase tickets.",
+  "type": "module",
+  "license": "Proprietary",
+  "private": true,
+  "files": [
+    "README.md",
+    "ARCHITECTURE.md",
+    "HIERARCHY.md",
+    "INSTALL.md",
+    "agents",
+    "contracts",
+    "config",
+    "scripts",
+    "examples"
+  ],
+  "scripts": {
+    "lint": "echo 'skills templates are markdown — nothing to lint'",
+    "test": "echo 'skills templates are markdown — nothing to test'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/symbo-ls/skills"
+  },
+  "keywords": [
+    "symbols",
+    "agents",
+    "orchestration",
+    "claude",
+    "templates"
+  ],
+  "author": "symbo.ls"
+}
